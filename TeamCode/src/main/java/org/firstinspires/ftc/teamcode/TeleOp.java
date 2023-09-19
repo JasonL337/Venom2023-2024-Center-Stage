@@ -33,6 +33,8 @@ public class TeleOp extends OpMode {
 
         double liftPower = gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y);
 
+        double armPower = gamepad2.right_stick_x*Math.abs(gamepad2.right_stick_x);
+
         frontL.setPower(y + x + rx);
         backL.setPower(y - x + rx);
         frontR.setPower(y - x - rx);
@@ -40,6 +42,8 @@ public class TeleOp extends OpMode {
 
         liftL.setPower(liftPower);
         liftR.setPower(liftPower);
+
+        arm.setPower(armPower);
     }
 
     @Override
