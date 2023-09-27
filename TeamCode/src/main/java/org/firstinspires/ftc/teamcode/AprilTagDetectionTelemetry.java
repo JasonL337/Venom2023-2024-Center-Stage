@@ -38,6 +38,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.tensorflow.lite.task.core.BaseOptions;
+import org.tensorflow.lite.task.vision.detector.ObjectDetector;
 
 import java.util.List;
 
@@ -66,7 +68,15 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        /*android.content.Context context;
+        ObjectDetector.ObjectDetectorOptions options =
+                ObjectDetector.ObjectDetectorOptions.builder()
+                        .setBaseOptions(BaseOptions.builder().useGpu().build())
+                        .setMaxResults(1)
+                        .build();
+        ObjectDetector objectDetector =
+                ObjectDetector.createFromFileAndOptions(
+                        context, modelFile, options);*/
         initAprilTag();
 
         // Wait for the DS start button to be touched.
