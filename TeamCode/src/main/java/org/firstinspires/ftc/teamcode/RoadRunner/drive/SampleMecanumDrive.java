@@ -49,6 +49,8 @@ import static org.firstinspires.ftc.teamcode.RoadRunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.RoadRunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.RoadRunner.drive.DriveConstants.kV;
 
+import kotlin.reflect.KParameter;
+
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
@@ -62,7 +64,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
-    private final IMU imu1;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
