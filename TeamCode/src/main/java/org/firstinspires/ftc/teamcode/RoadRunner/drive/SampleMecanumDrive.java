@@ -140,7 +140,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
 
         // This is the locaizer we will use for the time being
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,

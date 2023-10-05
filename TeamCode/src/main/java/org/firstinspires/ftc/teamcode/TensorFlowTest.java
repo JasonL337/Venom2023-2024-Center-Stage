@@ -38,6 +38,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 /*
@@ -48,7 +51,6 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-@Disabled
 public class TensorFlowTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -105,7 +107,7 @@ public class TensorFlowTest extends LinearOpMode {
     private void initTfod() {
 
         // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder().setModelAssetName("tensorflowssd-mobilenet_v12.tflite").build();
+            tfod = new TfodProcessor.Builder().setModelAssetName("tensorflowssd-mobilenet_v12.tflite").build();
 
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
@@ -144,17 +146,22 @@ public class TensorFlowTest extends LinearOpMode {
         //builder.setAutoStopLiveView(false);
 
         // Set and enable the processor.
-        builder.addProcessor(tfod);
+        if (tfod != null) {
+            builder.addProcessor(tfod);
 
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
+            // Build the Vision Portal, using the above settings.
+            visionPortal = builder.build();
 
-        // Set confidence threshold for TFOD recognitions, at any time.
-        //tfod.setMinResultConfidence(0.75f);
+            // Set confidence threshold for TFOD recognitions, at any time.
+            //tfod.setMinResultConfidence(0.75f);
 
-        // Disable or re-enable the TFOD processor at any time.
-        //visionPortal.setProcessorEnabled(tfod, true);
-
+            // Disable or re-enable the TFOD processor at any time.
+            //visionPortal.setProcessorEnabled(tfod, true);
+        }
+        else
+        {
+            telemetry.addLine("No Processor");
+        }
     }   // end method initTfod()
 
     /**
