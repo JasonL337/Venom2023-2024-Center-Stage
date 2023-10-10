@@ -29,14 +29,21 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.tensorflow.lite.Tensor;
+import org.tensorflow.lite.support.common.FileUtil;
+import org.tensorflow.lite.support.label.TensorLabel;
+import org.tensorflow.lite.task.vision.detector.Detection;
+import org.tensorflow.lite.task.vision.segmenter.OutputType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,7 +57,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
+@TeleOp(name = "Concept: TensorFlow Object DetectionV2", group = "Concept")
 public class TensorFlowTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -75,6 +82,7 @@ public class TensorFlowTest extends LinearOpMode {
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
         waitForStart();
+        CameraStreamSource cameraStreamSource;
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -83,13 +91,14 @@ public class TensorFlowTest extends LinearOpMode {
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
+                //FtcDashboard.getInstance().startCameraStream(visionPortal.str, 0);
 
                 // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
-                    visionPortal.stopStreaming();
-                } else if (gamepad1.dpad_up) {
+              //  if (gamepad1.dpad_down) {
+              //      visionPortal.stopStreaming();
+              //  } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
-                }
+              //  }
 
                 // Share the CPU.
                 sleep(20);
@@ -107,7 +116,7 @@ public class TensorFlowTest extends LinearOpMode {
     private void initTfod() {
 
         // Create the TensorFlow processor by using a builder.
-            tfod = new TfodProcessor.Builder().setModelAssetName("tensorflowssd-mobilenet_v12.tflite").build();
+            tfod = new TfodProcessor.Builder().setModelFileName("DetectionWithLabels.tflite").build();
 
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
@@ -153,7 +162,7 @@ public class TensorFlowTest extends LinearOpMode {
             visionPortal = builder.build();
 
             // Set confidence threshold for TFOD recognitions, at any time.
-            //tfod.setMinResultConfidence(0.75f);
+            tfod.setMinResultConfidence(0.3f);
 
             // Disable or re-enable the TFOD processor at any time.
             //visionPortal.setProcessorEnabled(tfod, true);
@@ -170,6 +179,8 @@ public class TensorFlowTest extends LinearOpMode {
     private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
+        List<String> labels = FileUtil.loadLabels(context, "labels.txt");
+        //public TensorLabel tensorLabel = new TensorLabel();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
 
         // Step through the list of recognitions and display info for each one.
@@ -177,7 +188,6 @@ public class TensorFlowTest extends LinearOpMode {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-            telemetry.addData(""," ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
