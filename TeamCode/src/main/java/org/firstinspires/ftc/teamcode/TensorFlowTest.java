@@ -123,6 +123,7 @@ public class TensorFlowTest extends LinearOpMode {
         // Create the TensorFlow processor by using a builder.
             List<String> labels = new ArrayList<>();
             try {
+                // new code
                 //AssetManager assetManager = hardwareMap.appContext.getAssets();
                 //InputStream inputStream = assetManager.open("labels.txt");
                 File file = new File("readme.md");
