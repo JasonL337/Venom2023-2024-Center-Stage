@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.content.res.AssetManager;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -48,7 +50,10 @@ import org.tensorflow.lite.task.vision.segmenter.OutputType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /*
  * This OpMode illustrates the basics of TensorFlow Object Detection,
@@ -116,7 +121,33 @@ public class TensorFlowTest extends LinearOpMode {
     private void initTfod() {
 
         // Create the TensorFlow processor by using a builder.
-            tfod = new TfodProcessor.Builder().setModelFileName("DetectionWithLabels.tflite").build();
+            List<String> labels = new ArrayList<>();
+            try {
+                //AssetManager assetManager = hardwareMap.appContext.getAssets();
+                //InputStream inputStream = assetManager.open("labels.txt");
+                File file = new File("readme.md");
+                Scanner scanner = new Scanner(file);
+                while (scanner.hasNextLine()) {
+                    labels.add(scanner.nextLine());
+                }
+                tfod = new TfodProcessor.Builder().setModelFileName("DetectionWithLabels.tflite")
+                        .setModelLabels(labels)
+                        .setIsModelQuantized(true)
+                        .setIsModelTensorFlow2(true)
+                        .build();
+            }
+            catch (IOException e)
+            {
+                telemetry.addData("Could not find labels.txt ", e.toString());
+                tfod = new TfodProcessor.Builder().setModelFileName("DetectionWithLabels.tflite")
+                        .setModelLabels(new String[]{"yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", })
+                        .setIsModelQuantized(true)
+                        .setIsModelTensorFlow2(true)
+                        .build();
+            }
+
+        //File tfliteModel = new File("***.tflite");
+        //Interpreter tflite = new Interpreter(tfliteModel);  // Load model.
 
                 // Use setModelAssetName() if the TF Model is built in as an asset.
                 // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
@@ -179,7 +210,7 @@ public class TensorFlowTest extends LinearOpMode {
     private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-        List<String> labels = FileUtil.loadLabels(context, "labels.txt");
+        //List<String> labels = FileUtil.loadLabels(context, "labels.txt");
         //public TensorLabel tensorLabel = new TensorLabel();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
 
