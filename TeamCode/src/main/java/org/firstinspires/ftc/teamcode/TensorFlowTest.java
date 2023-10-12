@@ -30,12 +30,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.content.res.AssetManager;
+import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -49,6 +51,7 @@ import org.tensorflow.lite.task.vision.segmenter.OutputType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -71,6 +74,10 @@ public class TensorFlowTest extends LinearOpMode {
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
     private TfodProcessor tfod;
+
+    boolean isWrite = false;
+
+    FileWriter myWriter;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -120,14 +127,24 @@ public class TensorFlowTest extends LinearOpMode {
      */
     private void initTfod() {
 
+        try {
+            myWriter = new FileWriter("Locations.txt");
+            myWriter.write("");
+            myWriter.close();
+        } catch (IOException e) {
+            telemetry.addData("error: ", e.toString());
+        }
+
         // Create the TensorFlow processor by using a builder.
+
             List<String> labels = new ArrayList<>();
             try {
                 // new code
-                //AssetManager assetManager = hardwareMap.appContext.getAssets();
-                //InputStream inputStream = assetManager.open("labels.txt");
-                File file = new File("readme.md");
-                Scanner scanner = new Scanner(file);
+                AssetManager assetManager = hardwareMap.appContext.getAssets();
+                InputStream inputStream = assetManager.open("labels.txt");
+
+                //File file = new File("readme.md");
+                Scanner scanner = new Scanner(inputStream);
                 while (scanner.hasNextLine()) {
                     labels.add(scanner.nextLine());
                 }
@@ -141,11 +158,13 @@ public class TensorFlowTest extends LinearOpMode {
             {
                 telemetry.addData("Could not find labels.txt ", e.toString());
                 tfod = new TfodProcessor.Builder().setModelFileName("DetectionWithLabels.tflite")
-                        .setModelLabels(new String[]{"yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", "yellow,", "green,", })
                         .setIsModelQuantized(true)
                         .setIsModelTensorFlow2(true)
                         .build();
             }
+            // New clipping code
+            tfod.setClippingMargins(0,0,0,0);
+
 
         //File tfliteModel = new File("***.tflite");
         //Interpreter tflite = new Interpreter(tfliteModel);  // Load model.
@@ -173,7 +192,7 @@ public class TensorFlowTest extends LinearOpMode {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(1920, 1080));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
@@ -194,7 +213,7 @@ public class TensorFlowTest extends LinearOpMode {
             visionPortal = builder.build();
 
             // Set confidence threshold for TFOD recognitions, at any time.
-            tfod.setMinResultConfidence(0.3f);
+            tfod.setMinResultConfidence(0.55f);
 
             // Disable or re-enable the TFOD processor at any time.
             //visionPortal.setProcessorEnabled(tfod, true);
@@ -215,6 +234,15 @@ public class TensorFlowTest extends LinearOpMode {
         //public TensorLabel tensorLabel = new TensorLabel();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
 
+        if (gamepad1.a)
+        {
+            isWrite = true;
+        }
+        else
+        {
+            isWrite = false;
+        }
+
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
@@ -223,6 +251,15 @@ public class TensorFlowTest extends LinearOpMode {
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+            if (isWrite) {
+                try {
+                    myWriter.append("\n\tImage" + String.format("%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100) + "\n");
+                    myWriter.append("position: " + String.format("%.0f / %.0f", x, y));
+                    myWriter.close();
+                } catch (IOException e) {
+                    telemetry.addData("error: ", e.toString());
+                }
+            }
         }   // end for() loop
 
     }   // end method telemetryTfod()
