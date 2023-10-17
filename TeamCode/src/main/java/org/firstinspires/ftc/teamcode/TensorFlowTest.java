@@ -36,6 +36,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -70,6 +72,11 @@ public class TensorFlowTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
+    ElapsedTime increaseTime = new ElapsedTime();
+
+    int rightWidth = 0;
+    int upHeight = 400;
+
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
@@ -86,13 +93,14 @@ public class TensorFlowTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+      //  while (!opModeIsActive()) {
+            initTfod();
 
-        initTfod();
-
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
+            // Wait for the DS start button to be touched.
+            telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+            telemetry.addData(">", "Touch Play to start OpMode");
+            telemetry.update();
+       // }
         waitForStart();
         CameraStreamSource cameraStreamSource;
 
@@ -162,8 +170,27 @@ public class TensorFlowTest extends LinearOpMode {
                         .setIsModelTensorFlow2(true)
                         .build();
             }
+        tfod.setClippingMargins(0, upHeight, rightWidth, 0);
             // New clipping code
-            tfod.setClippingMargins(0,0,0,0);
+        if (gamepad1.dpad_right) {
+            rightWidth += 10;
+            tfod.setClippingMargins(0, upHeight, rightWidth, 0);
+        }
+        else if (gamepad1.dpad_left)
+        {
+            rightWidth -= 10;
+            tfod.setClippingMargins(0, upHeight, rightWidth, 0);
+        }
+        else if (gamepad1.dpad_up)
+        {
+            upHeight += 10;
+            tfod.setClippingMargins(0, upHeight, rightWidth, 0);
+        }
+        else if (gamepad1.dpad_down)
+        {
+            upHeight -= 10;
+            tfod.setClippingMargins(0, upHeight, rightWidth, 0);
+        }
 
 
         //File tfliteModel = new File("***.tflite");
@@ -236,7 +263,7 @@ public class TensorFlowTest extends LinearOpMode {
 
         if (gamepad1.a)
         {
-            isWrite = true;
+            isWrite = false;
         }
         else
         {
