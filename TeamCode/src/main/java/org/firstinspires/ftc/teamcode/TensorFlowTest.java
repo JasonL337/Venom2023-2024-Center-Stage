@@ -240,7 +240,8 @@ public class TensorFlowTest extends LinearOpMode {
             visionPortal = builder.build();
 
             // Set confidence threshold for TFOD recognitions, at any time.
-            tfod.setMinResultConfidence(0.55f);
+            tfod.setMinResultConfidence(0.1f);
+            tfod.setZoom(2);
 
             // Disable or re-enable the TFOD processor at any time.
             //visionPortal.setProcessorEnabled(tfod, true);
@@ -272,19 +273,21 @@ public class TensorFlowTest extends LinearOpMode {
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
-            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+            if (!recognition.getLabel().equals("person")) {
+                double x = (recognition.getLeft() + recognition.getRight()) / 2;
+                double y = (recognition.getTop() + recognition.getBottom()) / 2;
 
-            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-            telemetry.addData("- Position", "%.0f / %.0f", x, y);
-            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-            if (isWrite) {
-                try {
-                    myWriter.append("\n\tImage" + String.format("%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100) + "\n");
-                    myWriter.append("position: " + String.format("%.0f / %.0f", x, y));
-                    myWriter.close();
-                } catch (IOException e) {
-                    telemetry.addData("error: ", e.toString());
+                telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                telemetry.addData("- Position", "%.0f / %.0f", x, y);
+                telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+                if (isWrite) {
+                    try {
+                        myWriter.append("\n\tImage" + String.format("%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100) + "\n");
+                        myWriter.append("position: " + String.format("%.0f / %.0f", x, y));
+                        myWriter.close();
+                    } catch (IOException e) {
+                        telemetry.addData("error: ", e.toString());
+                    }
                 }
             }
         }   // end for() loop
