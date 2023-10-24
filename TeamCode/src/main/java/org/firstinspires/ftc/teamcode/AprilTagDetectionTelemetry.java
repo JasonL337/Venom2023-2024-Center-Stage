@@ -38,6 +38,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.core.Point;
 import org.tensorflow.lite.task.core.BaseOptions;
 import org.tensorflow.lite.task.vision.detector.ObjectDetector;
 
@@ -65,6 +66,15 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
+
+    public static final double KNOWN_DIST_CM = 10;
+
+    public static final double KNOWN_HEIGHT_PIX = 100;
+
+    public double getDist(Point[] points)
+    {
+        return KNOWN_DIST_CM * (KNOWN_HEIGHT_PIX / ((points[0].y + points[1].y) / 2));
+    }
 
     @Override
     public void runOpMode() {

@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Double.parseDouble;
+
 import android.content.res.AssetManager;
 import android.util.Size;
 
@@ -38,6 +40,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -74,6 +77,10 @@ public class TensorFlowTest extends LinearOpMode {
 
     ElapsedTime increaseTime = new ElapsedTime();
 
+    FtcDashboard ftcDashboard;
+
+    Telemetry dashboardTelemetry;
+
     int rightWidth = 0;
     int upHeight = 400;
 
@@ -81,6 +88,12 @@ public class TensorFlowTest extends LinearOpMode {
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
     private TfodProcessor tfod;
+
+    public static final int CAMERA_WIDTH = 1920;
+
+    public static final int CAMERA_HEIGHT = 1080;
+
+    public static final int CAMERA_ZOOM = 2;
 
     boolean isWrite = false;
 
@@ -95,6 +108,9 @@ public class TensorFlowTest extends LinearOpMode {
     public void runOpMode() {
       //  while (!opModeIsActive()) {
             initTfod();
+
+            dashboardTelemetry.addLine("TESTING ONLY TO FTC DASHBOARD");
+            dashboardTelemetry.update();
 
             // Wait for the DS start button to be touched.
             telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -111,6 +127,7 @@ public class TensorFlowTest extends LinearOpMode {
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
+                //dashboardTelemetry.update();
                 //FtcDashboard.getInstance().startCameraStream(visionPortal.str, 0);
 
                 // Save CPU resources; can resume streaming when needed.
@@ -134,6 +151,9 @@ public class TensorFlowTest extends LinearOpMode {
      * Initialize the TensorFlow Object Detection processor.
      */
     private void initTfod() {
+
+        ftcDashboard = FtcDashboard.getInstance();
+        dashboardTelemetry = ftcDashboard.getTelemetry();
 
         try {
             myWriter = new FileWriter("Locations.txt");
@@ -170,6 +190,10 @@ public class TensorFlowTest extends LinearOpMode {
                         .setIsModelTensorFlow2(true)
                         .build();
             }
+
+
+
+
         tfod.setClippingMargins(0, upHeight, rightWidth, 0);
             // New clipping code
         if (gamepad1.dpad_right) {
@@ -219,7 +243,7 @@ public class TensorFlowTest extends LinearOpMode {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(1920, 1080));
+        builder.setCameraResolution(new Size(CAMERA_WIDTH, CAMERA_HEIGHT));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
@@ -241,7 +265,8 @@ public class TensorFlowTest extends LinearOpMode {
 
             // Set confidence threshold for TFOD recognitions, at any time.
             tfod.setMinResultConfidence(0.1f);
-            tfod.setZoom(2);
+            // From camera, left is positive, down is positive
+            tfod.setZoom(CAMERA_ZOOM);
 
             // Disable or re-enable the TFOD processor at any time.
             //visionPortal.setProcessorEnabled(tfod, true);
@@ -277,6 +302,13 @@ public class TensorFlowTest extends LinearOpMode {
                 double x = (recognition.getLeft() + recognition.getRight()) / 2;
                 double y = (recognition.getTop() + recognition.getBottom()) / 2;
 
+                if (recognition.getLabel().equals("parking meter"))
+                {
+                    dashboardTelemetry.addData("Labelll: ", recognition.getLabel());
+                    dashboardTelemetry.addData("- Position", "%.4f / %.0f", (x - (CAMERA_WIDTH / (CAMERA_ZOOM * 2))) / ((double) CAMERA_WIDTH / 2), y);
+                    dashboardTelemetry.update();
+                }
+
                 telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
                 telemetry.addData("- Position", "%.0f / %.0f", x, y);
                 telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
@@ -290,7 +322,8 @@ public class TensorFlowTest extends LinearOpMode {
                     }
                 }
             }
-        }   // end for() loop
+        }
+        // end for() loop
 
     }   // end method telemetryTfod()
 
