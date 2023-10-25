@@ -155,14 +155,6 @@ public class DetectTFImages extends LinearOpMode {
         ftcDashboard = FtcDashboard.getInstance();
         dashboardTelemetry = ftcDashboard.getTelemetry();
 
-        try {
-            myWriter = new FileWriter("Locations.txt");
-            myWriter.write("");
-            myWriter.close();
-        } catch (IOException e) {
-            telemetry.addData("error: ", e.toString());
-        }
-
         // Create the TensorFlow processor by using a builder.
 
         List<String> labels = new ArrayList<>();
@@ -277,9 +269,17 @@ public class DetectTFImages extends LinearOpMode {
         }
     }   // end method initTfod()
 
+
+    public List<Recognition> getTFDetections() {
+        return tfod.getRecognitions();
+
+    }
+
     /**
      * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
      */
+
+
     private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
