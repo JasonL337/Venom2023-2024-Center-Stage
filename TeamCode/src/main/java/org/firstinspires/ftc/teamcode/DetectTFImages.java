@@ -123,8 +123,6 @@ public class DetectTFImages extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                telemetryTfod();
-
                 // Push telemetry to the Driver Station.
                 telemetry.update();
                 //dashboardTelemetry.update();
@@ -150,7 +148,7 @@ public class DetectTFImages extends LinearOpMode {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
-    private void initTfod() {
+    public void initTfod() {
 
         ftcDashboard = FtcDashboard.getInstance();
         dashboardTelemetry = ftcDashboard.getTelemetry();
@@ -280,51 +278,5 @@ public class DetectTFImages extends LinearOpMode {
      */
 
 
-    private void telemetryTfod() {
-
-        List<Recognition> currentRecognitions = tfod.getRecognitions();
-        //List<String> labels = FileUtil.loadLabels(context, "labels.txt");
-        //public TensorLabel tensorLabel = new TensorLabel();
-        telemetry.addData("# Objects Detected", currentRecognitions.size());
-
-        if (gamepad1.a)
-        {
-            isWrite = false;
-        }
-        else
-        {
-            isWrite = false;
-        }
-
-        // Step through the list of recognitions and display info for each one.
-        for (Recognition recognition : currentRecognitions) {
-            if (!recognition.getLabel().equals("person")) {
-                double x = (recognition.getLeft() + recognition.getRight()) / 2;
-                double y = (recognition.getTop() + recognition.getBottom()) / 2;
-
-                if (recognition.getLabel().equals("parking meter"))
-                {
-                    dashboardTelemetry.addData("Labelll: ", recognition.getLabel());
-                    dashboardTelemetry.addData("- Position", "%.4f / %.0f", (x - (CAMERA_WIDTH / (CAMERA_ZOOM * 2))) / ((double) CAMERA_WIDTH / 2), y);
-                    dashboardTelemetry.update();
-                }
-
-                telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                telemetry.addData("- Position", "%.0f / %.0f", x, y);
-                telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-                if (isWrite) {
-                    try {
-                        myWriter.append("\n\tImage" + String.format("%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100) + "\n");
-                        myWriter.append("position: " + String.format("%.0f / %.0f", x, y));
-                        myWriter.close();
-                    } catch (IOException e) {
-                        telemetry.addData("error: ", e.toString());
-                    }
-                }
-            }
-        }
-        // end for() loop
-
-    }   // end method telemetryTfod()
 
 }   // end class
