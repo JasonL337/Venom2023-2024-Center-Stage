@@ -16,7 +16,7 @@ public class ProcessDetections {
     {
         left,
         middle,
-        right
+        right,
     }
     // Initializes the master reference to use telemetry and the camera dimensions on detectTFImages.
     public void initialize(LinearOpMode masterC) {
@@ -49,11 +49,11 @@ public class ProcessDetections {
     public pos getPos()
     {
         double x = getLerpX();
-        if (x > .5)
-            return pos.left;
-        else if (x > .1)
+        if (x > .8 || x == -1)
+            return pos.right;
+        else if (x > .25)
             return pos.middle;
-        return pos.right;
+        return pos.left;
     }
 
     // Returns the true position of the x dimension. -1 if nothing
@@ -61,7 +61,7 @@ public class ProcessDetections {
     {
         Recognition recognition = getCorrectDetection();
         if (recognition != null)
-            return (getCorrectDetection().getLeft() + getCorrectDetection().getRight()) / 2;
+            return (recognition.getLeft() + recognition.getRight()) / 2;
         return -1;
     }
 
