@@ -79,8 +79,9 @@ public class TeleOp extends OpMode {
 
             double multiplier = 1;
 
-            frontR.setPower((y - x + rx) * multiplier);
-            backL.setPower((y - x - rx) * multiplier);
+            frontL.setPower((y + x + rx) * multiplier);
+            backL.setPower((y - x + rx) * multiplier);
+            frontR.setPower((y - x - rx) * multiplier);
             backR.setPower((y + x - rx) * multiplier);
         }
 
