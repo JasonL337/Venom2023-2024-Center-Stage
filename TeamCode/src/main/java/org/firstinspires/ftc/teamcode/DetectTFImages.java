@@ -70,8 +70,8 @@ import java.util.Scanner;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: TensorFlow Object DetectionV2", group = "Concept")
-public class DetectTFImages extends LinearOpMode {
+@TeleOp(name = "Detect", group = "Concept")
+public class DetectTFImages {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -97,6 +97,8 @@ public class DetectTFImages extends LinearOpMode {
 
     boolean isWrite = false;
 
+    LinearOpMode master;
+
     FileWriter myWriter;
 
     /**
@@ -104,52 +106,13 @@ public class DetectTFImages extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    @Override
-    public void runOpMode() {
-        //  while (!opModeIsActive()) {
-        initTfod();
-
-        dashboardTelemetry.addLine("TESTING ONLY TO FTC DASHBOARD");
-        dashboardTelemetry.update();
-
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
-        // }
-        waitForStart();
-        CameraStreamSource cameraStreamSource;
-
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-
-                // Push telemetry to the Driver Station.
-                telemetry.update();
-                //dashboardTelemetry.update();
-                //FtcDashboard.getInstance().startCameraStream(visionPortal.str, 0);
-
-                // Save CPU resources; can resume streaming when needed.
-                //  if (gamepad1.dpad_down) {
-                //      visionPortal.stopStreaming();
-                //  } else if (gamepad1.dpad_up) {
-                visionPortal.resumeStreaming();
-                //  }
-
-                // Share the CPU.
-                sleep(20);
-            }
-        }
-
-        // Save more CPU resources when camera is no longer needed.
-        visionPortal.close();
-
-    }   // end runOpMode()
 
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
-    public void initTfod() {
+    public void initTfod(LinearOpMode m) {
 
+        master = m;
         ftcDashboard = FtcDashboard.getInstance();
         dashboardTelemetry = ftcDashboard.getTelemetry();
 
@@ -158,7 +121,7 @@ public class DetectTFImages extends LinearOpMode {
         List<String> labels = new ArrayList<>();
         try {
             // new code
-            AssetManager assetManager = hardwareMap.appContext.getAssets();
+            AssetManager assetManager = master.hardwareMap.appContext.getAssets();
             InputStream inputStream = assetManager.open("labels.txt");
 
             //File file = new File("readme.md");
@@ -174,7 +137,7 @@ public class DetectTFImages extends LinearOpMode {
         }
         catch (IOException e)
         {
-            telemetry.addData("Could not find labels.txt ", e.toString());
+            master.telemetry.addData("Could not find labels.txt ", e.toString());
             tfod = new TfodProcessor.Builder().setModelFileName("DetectionWithLabels.tflite")
                     .setIsModelQuantized(true)
                     .setIsModelTensorFlow2(true)
@@ -186,21 +149,21 @@ public class DetectTFImages extends LinearOpMode {
 
         tfod.setClippingMargins(0, upHeight, rightWidth, 0);
         // New clipping code
-        if (gamepad1.dpad_right) {
+        if (master.gamepad1.dpad_right) {
             rightWidth += 10;
             tfod.setClippingMargins(0, upHeight, rightWidth, 0);
         }
-        else if (gamepad1.dpad_left)
+        else if (master.gamepad1.dpad_left)
         {
             rightWidth -= 10;
             tfod.setClippingMargins(0, upHeight, rightWidth, 0);
         }
-        else if (gamepad1.dpad_up)
+        else if (master.gamepad1.dpad_up)
         {
             upHeight += 10;
             tfod.setClippingMargins(0, upHeight, rightWidth, 0);
         }
-        else if (gamepad1.dpad_down)
+        else if (master.gamepad1.dpad_down)
         {
             upHeight -= 10;
             tfod.setClippingMargins(0, upHeight, rightWidth, 0);
@@ -227,7 +190,7 @@ public class DetectTFImages extends LinearOpMode {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            builder.setCamera(master.hardwareMap.get(WebcamName.class, "Webcam 1"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
@@ -263,7 +226,7 @@ public class DetectTFImages extends LinearOpMode {
         }
         else
         {
-            telemetry.addLine("No Processor");
+            master.telemetry.addLine("No Processor");
         }
     }   // end method initTfod()
 

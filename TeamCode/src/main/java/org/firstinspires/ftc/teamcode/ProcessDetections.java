@@ -23,7 +23,7 @@ public class ProcessDetections {
         master = masterC;
         //masterC.telemetry.addData("test", 4);
         detectTFImages = new DetectTFImages();
-        detectTFImages.initTfod();
+        detectTFImages.initTfod(masterC);
         DetectTFImages.CAMERA_WIDTH = 1920;
         DetectTFImages.CAMERA_HEIGHT = 1080;
         DetectTFImages.CAMERA_ZOOM = 2;
