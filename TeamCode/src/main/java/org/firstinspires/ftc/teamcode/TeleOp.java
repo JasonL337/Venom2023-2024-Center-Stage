@@ -31,7 +31,7 @@ public class TeleOp extends OpMode {
     @Override
     public void loop() {
         double y = -gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y);
-        double x = gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_y);
+        double x = gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x);
         double rx = gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x);
 
         double liftPower = gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y);

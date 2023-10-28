@@ -89,11 +89,11 @@ public class DetectTFImages extends LinearOpMode {
      */
     private TfodProcessor tfod;
 
-    public static final int CAMERA_WIDTH = 1920;
+    public static int CAMERA_WIDTH = 1920;
 
-    public static final int CAMERA_HEIGHT = 1080;
+    public static int CAMERA_HEIGHT = 1080;
 
-    public static final int CAMERA_ZOOM = 2;
+    public static int CAMERA_ZOOM = 2;
 
     boolean isWrite = false;
 
@@ -268,6 +268,7 @@ public class DetectTFImages extends LinearOpMode {
     }   // end method initTfod()
 
 
+    // Returns the list of all the detections from the model.
     public List<Recognition> getTFDetections() {
         return tfod.getRecognitions();
 
