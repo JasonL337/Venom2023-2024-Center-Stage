@@ -26,7 +26,7 @@ public class TensorflowTestV2 extends LinearOpMode implements TensorflowProp, In
     }
 
     @Override
-    public void initializeMotoes() {
+    public void initializeMotors() {
         telemetry.addLine("hi");
     }
 }
