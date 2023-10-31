@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "TensorflowTestV2", group = "Concept")
-public class TensorflowTestV2 extends LinearOpMode implements TensorflowProp, InitMotors {
+public class TensorflowTestV2 extends LinearOpMode implements TensorflowProp, InitMotors, AprilTag{
     ProcessDetections processDetections;
+
+    AprilTagPos aprilTagPos;
     public void runOpMode()
     {
         initProcessDetections();
@@ -28,5 +29,11 @@ public class TensorflowTestV2 extends LinearOpMode implements TensorflowProp, In
     @Override
     public void initializeMotors() {
         telemetry.addLine("hi");
+    }
+
+    @Override
+    public void initAprilTag() {
+        aprilTagPos = new AprilTagPos();
+        aprilTagPos.initAprilTag(this);
     }
 }
