@@ -190,8 +190,19 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
+
+                // corner 0 is top left
+                // corner 1 is top right
+                // corner 2 is bottom right
+                // corner 3 is bottom left
+
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine("" + detection.corners.toString() + " " + detection.metadata.name);
+                for (Point p : detection.corners)
+                {
+                    telemetry.addLine("x: " + p.x + "y: " + p.y);
+                }
+                telemetry.addData("metadata: ", detection.metadata);
+
                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                 telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
@@ -205,6 +216,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
+
 
     }   // end method telemetryAprilTag()
 
