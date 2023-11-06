@@ -23,6 +23,9 @@ public class OurTeleOp extends OpMode {
     DcMotor inTake;
     Servo armR;
     Servo outTake;
+    Servo boxInTake;
+    Servo boxL;
+    Servo boxR;
     double lockHeading = 0;
     boolean startLock = true;
 
@@ -45,8 +48,10 @@ public class OurTeleOp extends OpMode {
         armL = hardwareMap.servo.get("armL");
         liftL = hardwareMap.dcMotor.get("liftLeftMotor");
         liftR = hardwareMap.dcMotor.get("liftRightMotor");
+        boxInTake = hardwareMap.servo.get("boxIntake");
         outTake = hardwareMap.servo.get("outtake");
-
+        boxL = hardwareMap.servo.get("boxL");
+        boxR = hardwareMap.servo.get("boxR");
 
         /* liftR = hardwareMap.dcMotor.get("liftR");
         liftL = hardwareMap.dcMotor.get("liftL"); */
@@ -85,6 +90,41 @@ public class OurTeleOp extends OpMode {
         boolean left_bumper = gamepad2.left_bumper;
         boolean right_bumper = gamepad2.right_bumper;
         boolean Y_button = gamepad2.y;
+        boolean isBoxOpen = false;
+        boolean isBoxDown = false;
+        boolean topDpadButton = gamepad2.dpad_up;
+        boolean bottomDpadButton = gamepad2.dpad_down;
+
+
+        if (bottomDpadButton == true) {
+            if (isBoxDown == false) {
+                isBoxDown = true;
+            } else {
+                isBoxDown = false;
+            }
+        }
+
+        if (isBoxDown == true) {
+            boxL.setPosition(0);
+            boxR.setPosition(1);
+        } else {
+            boxL.setPosition(1);
+            boxR.setPosition(0);
+        }
+
+        if (topDpadButton == true) {
+            if (isBoxOpen == false) {
+                isBoxOpen = true;
+            } else {
+                isBoxOpen = false;
+            }
+        }
+
+        if (isBoxOpen == true) {
+            boxInTake.setPosition(1);
+        } else {
+            boxInTake.setPosition(0);
+        }
 
         double adder = 0;
 
