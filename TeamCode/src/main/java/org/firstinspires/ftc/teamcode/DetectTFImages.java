@@ -121,14 +121,20 @@ public class DetectTFImages {
         List<String> labels = new ArrayList<>();
         try {
             // new code
+            master.telemetry.addLine("I'm in");
+            master.telemetry.update();
             AssetManager assetManager = master.hardwareMap.appContext.getAssets();
             InputStream inputStream = assetManager.open("labels.txt");
 
             //File file = new File("readme.md");
             Scanner scanner = new Scanner(inputStream);
             while (scanner.hasNextLine()) {
+                master.telemetry.addLine("looping");
+                master.telemetry.update();
                 labels.add(scanner.nextLine());
             }
+            master.telemetry.addLine("out");
+            master.telemetry.update();
             tfod = new TfodProcessor.Builder().setModelFileName("DetectionWithLabels.tflite")
                     .setModelLabels(labels)
                     .setIsModelQuantized(true)
@@ -149,25 +155,6 @@ public class DetectTFImages {
 
         tfod.setClippingMargins(0, upHeight, rightWidth, 0);
         // New clipping code
-        if (master.gamepad1.dpad_right) {
-            rightWidth += 10;
-            tfod.setClippingMargins(0, upHeight, rightWidth, 0);
-        }
-        else if (master.gamepad1.dpad_left)
-        {
-            rightWidth -= 10;
-            tfod.setClippingMargins(0, upHeight, rightWidth, 0);
-        }
-        else if (master.gamepad1.dpad_up)
-        {
-            upHeight += 10;
-            tfod.setClippingMargins(0, upHeight, rightWidth, 0);
-        }
-        else if (master.gamepad1.dpad_down)
-        {
-            upHeight -= 10;
-            tfod.setClippingMargins(0, upHeight, rightWidth, 0);
-        }
 
 
         //File tfliteModel = new File("***.tflite");

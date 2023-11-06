@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name = "TeleOpV2", group = "Tele")
 
@@ -20,6 +23,13 @@ public class OurTeleOp extends OpMode {
     DcMotor inTake;
 
     Servo armR;
+
+    double lockHeading = 0;
+    boolean startLock = true;
+
+    public BNO055IMU imu;
+    BNO055IMU.Parameters pars = new BNO055IMU.Parameters();
+    Orientation angles;
     @Override
     public void init() {
 
@@ -53,6 +63,12 @@ public class OurTeleOp extends OpMode {
 
     }
 
+    public double returnGyroYaw()
+    {
+        angles = imu.getAngularOrientation();
+        return angles.firstAngle;
+    }
+
     @Override
     public void loop() {
         double y = -gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y);
@@ -60,15 +76,13 @@ public class OurTeleOp extends OpMode {
         double rx = gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x);
         double left_trigger = gamepad1.left_trigger;
         double right_trigger = gamepad1.right_trigger;
-        boolean B_button = gamepad1.b;
-        boolean X_button = gamepad1.x;
+        boolean B_button = gamepad2.b;
+        boolean X_button = gamepad2.x;
+        boolean A_button = gamepad1.a;
+
+        double adder = 0;
 
         /* double liftPower = gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y); */
-
-        frontL.setPower(y + x + rx);
-        backL.setPower(y - x + rx);
-        frontR.setPower(y - x - rx);
-        backR.setPower(y + x - rx);
 
 
 
@@ -85,6 +99,21 @@ public class OurTeleOp extends OpMode {
             armL.setPosition(1);
             armR.setPosition(0);
         }
+
+        if (A_button)
+        {
+            if (startLock)
+            {
+                lockHeading = returnGyroYaw();
+                startLock = false;
+            }
+            adder = returnGyroYaw() - lockHeading * .02;
+        }
+
+        frontL.setPower((y + x + rx) - adder);
+        backL.setPower((y - x + rx) - adder);
+        frontR.setPower((y - x - rx) + adder);
+        backR.setPower((y + x - rx) + adder);
 
         /* if (left_trigger == 1) {
 
