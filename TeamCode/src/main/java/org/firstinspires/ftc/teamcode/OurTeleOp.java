@@ -21,9 +21,8 @@ public class OurTeleOp extends OpMode {
     DcMotor liftL;
     Servo armL;
     DcMotor inTake;
-
     Servo armR;
-
+    Servo outTake;
     double lockHeading = 0;
     boolean startLock = true;
 
@@ -44,6 +43,9 @@ public class OurTeleOp extends OpMode {
         inTake = hardwareMap.dcMotor.get("intake");
         armR = hardwareMap.servo.get("armR");
         armL = hardwareMap.servo.get("armL");
+        liftL = hardwareMap.dcMotor.get("liftLeftMotor");
+        liftR = hardwareMap.dcMotor.get("liftRightMotor");
+        outTake = hardwareMap.servo.get("outtake");
 
 
         /* liftR = hardwareMap.dcMotor.get("liftR");
@@ -59,7 +61,8 @@ public class OurTeleOp extends OpMode {
         frontL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         inTake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        liftL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -79,12 +82,30 @@ public class OurTeleOp extends OpMode {
         boolean B_button = gamepad2.b;
         boolean X_button = gamepad2.x;
         boolean A_button = gamepad1.a;
+        boolean left_bumper = gamepad2.left_bumper;
+        boolean right_bumper = gamepad2.right_bumper;
+        boolean Y_button = gamepad2.y;
 
         double adder = 0;
 
         /* double liftPower = gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y); */
 
+        if (left_bumper == true) {
+            liftL.setPower(-1);
+            liftR.setPower(-1);
+        } if (right_bumper == true) {
+            liftL.setPower(1);
+            liftR.setPower(1);
+        } else {
+            liftL.setPower(0);
+            liftR.setPower(0);
+        }
 
+        if (Y_button == true) {
+            outTake.setPosition(1);
+        } else {
+            outTake.setPosition(0);
+        }
 
         if (B_button == true) {
             inTake.setPower(1);
