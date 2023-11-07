@@ -42,7 +42,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -81,6 +80,8 @@ public class DetectTFImages {
 
     Telemetry dashboardTelemetry;
 
+    Camera camera;
+
     int rightWidth = 0;
     int upHeight = 400;
 
@@ -110,7 +111,7 @@ public class DetectTFImages {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
-    public void initTfod(LinearOpMode m) {
+    public void initTfod(LinearOpMode m, Camera camera) {
 
         master = m;
         ftcDashboard = FtcDashboard.getInstance();
@@ -153,6 +154,8 @@ public class DetectTFImages {
 
 
 
+
+
         tfod.setClippingMargins(0, upHeight, rightWidth, 0);
         // New clipping code
 
@@ -173,17 +176,7 @@ public class DetectTFImages {
 
 
         // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        // Set the camera (webcam vs. built-in RC phone camera).
-        if (USE_WEBCAM) {
-            builder.setCamera(master.hardwareMap.get(WebcamName.class, "Webcam 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(CAMERA_WIDTH, CAMERA_HEIGHT));
+       // visionPortal = camera.getBuilder().build();
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
@@ -196,12 +189,13 @@ public class DetectTFImages {
         // If set "false", monitor shows camera view without annotations.
         //builder.setAutoStopLiveView(false);
 
+        this.camera = camera;
         // Set and enable the processor.
         if (tfod != null) {
-            builder.addProcessor(tfod);
+            this.camera.getBuilder().addProcessor(tfod);
 
             // Build the Vision Portal, using the above settings.
-            visionPortal = builder.build();
+            //visionPortal = camera.getBuilder().build();
 
             // Set confidence threshold for TFOD recognitions, at any time.
             tfod.setMinResultConfidence(0.1f);
@@ -209,7 +203,7 @@ public class DetectTFImages {
             tfod.setZoom(CAMERA_ZOOM);
 
             // Disable or re-enable the TFOD processor at any time.
-            //visionPortal.setProcessorEnabled(tfod, true);
+
         }
         else
         {
@@ -222,6 +216,11 @@ public class DetectTFImages {
     public List<Recognition> getTFDetections() {
         return tfod.getRecognitions();
 
+    }
+
+    public void setProcessor(boolean active)
+    {
+        camera.getBuilder().build().setProcessorEnabled(tfod, active);
     }
 
     /**

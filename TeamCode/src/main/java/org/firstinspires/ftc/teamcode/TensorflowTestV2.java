@@ -14,19 +14,24 @@ public class TensorflowTestV2 extends LinearOpMode implements TensorflowProp, In
     ProcessDetections processDetections;
 
     AprilTagPos aprilTagPos;
+
+    Camera camera;
     public void runOpMode()
     {
-        //initProcessDetections();
+        initVisionPortal();
+        initProcessDetections();
         initAprilTag();
         telemetry.addLine("good to go!");
         telemetry.update();
-        waitForStart();
         ElapsedTime elapsedTime = new ElapsedTime();
         aprilTagPos.setCorrectAprilTag(ProcessDetections.pos.middle, false);
+        processDetections.detectTFImages.setProcessor(true);
+        //aprilTagPos.getAprilTags.setProcessor(false);
+        waitForStart();
         while (opModeIsActive() && !isStopRequested())
         {
             telemetry.addData("time", elapsedTime);
-            //telemetry.addData("pos: ", processDetections.getPos());
+            telemetry.addData("pos: ", processDetections.getPos());
             //List<AprilTagDetection> dets = aprilTagPos.getDetections();
                 //telemetry.addData("height: ", aprilTagPos.getHeight(dets.get(0)));
                 double[] dists = aprilTagPos.getDist();
@@ -43,7 +48,7 @@ public class TensorflowTestV2 extends LinearOpMode implements TensorflowProp, In
     @Override
     public void initProcessDetections() {
         processDetections = new ProcessDetections();
-        processDetections.initialize(this);
+        processDetections.initialize(this, getCamera());
     }
 
     @Override
@@ -54,12 +59,19 @@ public class TensorflowTestV2 extends LinearOpMode implements TensorflowProp, In
     @Override
     public void initAprilTag() {
         aprilTagPos = new AprilTagPos();
-        aprilTagPos.initAprilTag(this);
+        aprilTagPos.initAprilTag(this, getCamera());
     }
 
     @Override
     public void initVisionPortal()
     {
+        camera = new Camera();
+        camera.initVisionPortal(this);
+    }
 
+    @Override
+    public Camera getCamera()
+    {
+        return camera;
     }
 }
