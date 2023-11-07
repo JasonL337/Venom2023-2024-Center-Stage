@@ -24,10 +24,10 @@ public class AprilTagPos {
     public static final double KNOWN_HEIGHT = 159.5;
     public static final double DIST_BETWEEN = 6;
 
-    public void initAprilTag(LinearOpMode masterC) {
+    public void initAprilTag(LinearOpMode masterC, Camera camera) {
         master = masterC;
         getAprilTags = new GetAprilTags();
-        getAprilTags.initAprilTagDetections(masterC);
+        getAprilTags.initAprilTagDetections(masterC, camera);
     }   // end method initAprilTag()
 
     public double getHeight(AprilTagDetection aprilTag)

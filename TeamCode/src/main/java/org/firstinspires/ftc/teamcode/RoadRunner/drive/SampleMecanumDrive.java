@@ -106,10 +106,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeftMotor");
+        leftRear = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
+        rightRear = hardwareMap.get(DcMotorEx.class, "backRightMotor");
+        rightFront = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -306,7 +306,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

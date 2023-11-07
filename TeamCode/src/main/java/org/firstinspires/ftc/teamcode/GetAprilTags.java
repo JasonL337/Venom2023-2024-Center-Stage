@@ -15,11 +15,14 @@ public class GetAprilTags {
 
     AprilTagProcessor aprilTag;
 
+    Camera camera;
+
     VisionPortal visionPortal;
 
     LinearOpMode master;
 
-    public void initAprilTagDetections(LinearOpMode masterC) {
+    public void initAprilTagDetections(LinearOpMode masterC, Camera camera) {
+        this.camera = camera;
         master = masterC;
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
@@ -40,19 +43,19 @@ public class GetAprilTags {
                 .build();
 
         // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
+        //VisionPortal.Builder builder = camera.getBuilder();
 
         // Set the camera (webcam vs. built-in RC phone camera).
-        builder.setCamera(master.hardwareMap.get(WebcamName.class, "Webcam 1"));
+        //builder.setCamera(master.hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(DetectTFImages.CAMERA_WIDTH, DetectTFImages.CAMERA_HEIGHT));
+        //builder.setCameraResolution(new Size(DetectTFImages.CAMERA_WIDTH, DetectTFImages.CAMERA_HEIGHT));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
 
         // Choose whether or not LiveView stops if no processors are enabled.
         // If set "true", monitor shows solid orange screen if no processors enabled.
@@ -60,10 +63,11 @@ public class GetAprilTags {
         //builder.setAutoStopLiveView(false);
 
         // Set and enable the processor.
-        builder.addProcessor(aprilTag);
+        this.camera.getBuilder().addProcessor(aprilTag);
 
         // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
+
+        //visionPortal = camera.getBuilder().build();
 
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);
@@ -73,5 +77,10 @@ public class GetAprilTags {
     public List<AprilTagDetection> getDetections()
     {
         return aprilTag.getDetections();
+    }
+
+    public void setProcessor(boolean active)
+    {
+        camera.getBuilder().build().setProcessorEnabled(aprilTag, active);
     }
 }

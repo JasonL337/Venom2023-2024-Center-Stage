@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
@@ -22,16 +23,24 @@ public class OurTeleOp extends OpMode {
     Servo armL;
     DcMotor inTake;
     Servo armR;
-    Servo outTake;
+    Servo boxOutTake;
     Servo boxInTake;
     Servo boxL;
     Servo boxR;
+
+    // Gyro locking and starting positions
     double lockHeading = 0;
     boolean startLock = true;
+    boolean isBoxOpen = false;
+    boolean isBoxDown = false;
 
     public BNO055IMU imu;
     BNO055IMU.Parameters pars = new BNO055IMU.Parameters();
     Orientation angles;
+
+    ElapsedTime dpadUp = new ElapsedTime();
+    ElapsedTime upArmTime = new ElapsedTime();
+    boolean armUp = false;
     @Override
     public void init() {
 
@@ -39,22 +48,34 @@ public class OurTeleOp extends OpMode {
         final double ARM_MINIMUM = 0.0; // sets the minimum rotation of the servo to be 0
         final double ARM_MAXIMUM = 1; // sets the maximum value of the rotation to be 1
 
+        // Drive train motors
         frontL = hardwareMap.dcMotor.get("frontLeftMotor");
         frontR = hardwareMap.dcMotor.get("frontRightMotor");
         backL = hardwareMap.dcMotor.get("backLeftMotor");
         backR = hardwareMap.dcMotor.get("backRightMotor");
+
+        // Intake motor
         inTake = hardwareMap.dcMotor.get("intake");
-        armR = hardwareMap.servo.get("armR");
-        armL = hardwareMap.servo.get("armL");
+
+        // Lift motors
         liftL = hardwareMap.dcMotor.get("liftLeftMotor");
         liftR = hardwareMap.dcMotor.get("liftRightMotor");
+
+        // Left and right sides of giant arm
+        armR = hardwareMap.servo.get("armR");
+        armL = hardwareMap.servo.get("armL");
+
+        // Not sure what these are
         boxInTake = hardwareMap.servo.get("boxIntake");
-        outTake = hardwareMap.servo.get("outtake");
+        boxOutTake = hardwareMap.servo.get("outtake");
+
+        // Left and right sides of box that change its angle
         boxL = hardwareMap.servo.get("boxL");
         boxR = hardwareMap.servo.get("boxR");
 
-        /* liftR = hardwareMap.dcMotor.get("liftR");
-        liftL = hardwareMap.dcMotor.get("liftL"); */
+        // gyro
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
 
 
 
@@ -79,135 +100,167 @@ public class OurTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        double y = -gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y);
-        double x = gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x);
-        double rx = gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x);
-        double left_trigger = gamepad1.left_trigger;
-        double right_trigger = gamepad1.right_trigger;
-        boolean B_button = gamepad2.b;
-        boolean X_button = gamepad2.x;
-        boolean A_button = gamepad1.a;
-        boolean left_bumper = gamepad2.left_bumper;
-        boolean right_bumper = gamepad2.right_bumper;
-        boolean Y_button = gamepad2.y;
-        boolean isBoxOpen = false;
-        boolean isBoxDown = false;
-        boolean topDpadButton = gamepad2.dpad_up;
-        boolean bottomDpadButton = gamepad2.dpad_down;
+
+        /* Gamepad 1:
+        RC control left/right joystick
+        Left trigger pressed and held = turbo
+        Right trigger pressed and held = turtle
+        A button pressed and held = gyro lock
+         */
+
+        runDriver1Methods();
 
 
-        if (bottomDpadButton == true) {
-            if (isBoxDown == false) {
-                isBoxDown = true;
-            } else {
-                isBoxDown = false;
-            }
+        /* Gamepad 2:
+        B button pressed and held = Intake power on
+        X button pressed = set position of giant arm up/down
+        Left joystick = move lift up/down
+        Right trigger pressed and held = turtle lift
+        Right button lower box
+        Left button raise box
+         */
+
+        runDriver2Methods();
+
+
         }
 
-        if (isBoxDown == true) {
-            boxL.setPosition(0);
-            boxR.setPosition(1);
-        } else {
-            boxL.setPosition(1);
-            boxR.setPosition(0);
-        }
-
-        if (topDpadButton == true) {
-            if (isBoxOpen == false) {
-                isBoxOpen = true;
-            } else {
-                isBoxOpen = false;
-            }
-        }
-
-        if (isBoxOpen == true) {
-            boxInTake.setPosition(1);
-        } else {
-            boxInTake.setPosition(0);
-        }
-
-        double adder = 0;
-
-        /* double liftPower = gamepad2.left_stick_y*Math.abs(gamepad2.left_stick_y); */
-
-        if (left_bumper == true) {
-            liftL.setPower(-1);
-            liftR.setPower(-1);
-        } if (right_bumper == true) {
-            liftL.setPower(1);
-            liftR.setPower(1);
-        } else {
-            liftL.setPower(0);
-            liftR.setPower(0);
-        }
-
-        if (Y_button == true) {
-            outTake.setPosition(1);
-        } else {
-            outTake.setPosition(0);
-        }
-
-        if (B_button == true) {
-            inTake.setPower(1);
-        } else {
-            inTake.setPower(0);
-        }
-
-        if (X_button == true) {
-            armL.setPosition(0);
-            armR.setPosition(1);
-        } else {
-            armL.setPosition(1);
-            armR.setPosition(0);
-        }
-
-        if (A_button)
+        ///////////////////////////////////////////////////// DRIVER 1 METHODS /////////////////////////////////////////////////
+        public void runDriver1Methods()
         {
-            if (startLock)
+            runDriveTrain();
+        }
+
+        public double gyroLockAdder()
+        {
+            boolean A_button = gamepad2.a;
+            double adder = 0;
+
+            if (A_button)
             {
-                lockHeading = returnGyroYaw();
-                startLock = false;
+                if (startLock)
+                {
+                    lockHeading = returnGyroYaw();
+                    startLock = false;
+                }
+                adder = returnGyroYaw() - lockHeading * .02;
             }
-            adder = returnGyroYaw() - lockHeading * .02;
+            return adder;
         }
 
-        frontL.setPower((y + x + rx) - adder);
-        backL.setPower((y - x + rx) - adder);
-        frontR.setPower((y - x - rx) + adder);
-        backR.setPower((y + x - rx) + adder);
+        public void runDriveTrain()
+        {
+            double y = -gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y);
+            double x = gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x);
+            double rx = gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x);
+            double adder = gyroLockAdder();
 
-        /* if (left_trigger == 1) {
+            double multiplier = .75;
+            if (gamepad1.left_trigger > .1)
+                multiplier = 1;
+            if (gamepad1.right_trigger > .1)
+                multiplier = .25;
 
-            double multiplier = 1;
-
-            frontL.setPower((y + x + rx) * multiplier);
-            frontR.setPower((y - x + rx) * multiplier);
-            backL.setPower((y - x - rx) * multiplier);
-            backR.setPower((y + x - rx) * multiplier);
-
-        } if (right_trigger == 1) {
-
-            double multiplier = 0.25;
-
-            frontL.setPower((y + x + rx) * multiplier);
-            frontR.setPower((y - x + rx) * multiplier);
-            backL.setPower((y - x - rx) * multiplier);
-            backR.setPower((y + x - rx) * multiplier);
-
-        } else {*/
-
-            /*double multiplier = 1;
-
-            frontL.setPower((y + x + rx) * multiplier);
-            frontR.setPower((y - x - rx) * multiplier);
-            backL.setPower((y - x + rx) * multiplier);
-            backR.setPower((y + x - rx) * multiplier);*/
+            frontL.setPower(((y + x + rx) - adder) * multiplier);
+            backL.setPower(((y - x + rx) - adder) * multiplier);
+            frontR.setPower(((y - x - rx) + adder) * multiplier);
+            backR.setPower(((y + x - rx) + adder) * multiplier);
         }
 
-        /* liftL.setPower(liftPower);
-        liftR.setPower(liftPower); */
 
-        /* arm.setPower(armPower); */
+
+        ///////////////////////////////////////////////////// DRIVER 2 METHODS /////////////////////////////////////////////////
+        public void runDriver2Methods()
+        {
+            changeBoxUpDown();
+            changeBoxPos();
+            changeLiftPos();
+            changeIntakePower();
+            changeIntakeLift();
+        }
+
+        public void changeBoxUpDown()
+        {
+            boolean leftBump = gamepad2.left_bumper;
+            boolean rightBump = gamepad2.right_bumper;
+            if (leftBump) {
+                boxL.setPosition(1);
+                boxR.setPosition(0);
+            }
+            if (rightBump) {
+                boxL.setPosition(0);
+                boxR.setPosition(1);
+            }
+        }
+
+
+        public void changeBoxPos()
+        {
+            boolean topDpadButton = gamepad2.dpad_up;
+            boolean Y_button = gamepad2.y;
+
+            if (topDpadButton && dpadUp.milliseconds() > 500) {
+                if (isBoxOpen) {
+                    isBoxOpen = false;
+                } else {
+                    isBoxOpen = true;
+                }
+                dpadUp.reset();
+            }
+            if (isBoxOpen)
+            {
+                boxInTake.setPosition(1);
+            }
+            else
+            {
+                boxInTake.setPosition(0);
+            }
+
+            if (Y_button) {
+                boxOutTake.setPosition(1);
+            } else {
+                boxOutTake.setPosition(0);
+            }
+        }
+
+        public void changeLiftPos()
+        {
+            double leftJoy = gamepad2.left_stick_y;
+            double multiplier = Math.min(1, 1.2 - gamepad2.right_trigger);
+            liftL.setPower(leftJoy * multiplier);
+            liftR.setPower(leftJoy * multiplier);
+        }
+
+        public void changeIntakePower()
+        {
+            boolean B_button = gamepad2.b;
+            if (B_button) {
+                inTake.setPower(-1);
+            } else {
+                inTake.setPower(0);
+            }
+        }
+
+        public void changeIntakeLift()
+        {
+            boolean X_button = gamepad2.x;
+            if (X_button && upArmTime.milliseconds() > 500) {
+                if (armUp)
+                {
+                    armUp = false;
+                    armL.setPosition(0.2);
+                    armR.setPosition(1);
+                }
+                else
+                {
+                    armUp = true;
+                    armL.setPosition(1);
+                    armR.setPosition(0);
+                }
+                upArmTime.reset();
+            }
+        }
+
 
 
 

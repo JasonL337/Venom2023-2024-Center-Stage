@@ -36,9 +36,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
-
     private List<Integer> lastEncPositions, lastEncVels;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
@@ -75,9 +72,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions.add(frontPos);
 
         return Arrays.asList(
-                encoderTicksToInches(leftPos) * X_MULTIPLIER,
-                encoderTicksToInches(rightPos) * X_MULTIPLIER,
-                encoderTicksToInches(frontPos) * Y_MULTIPLIER
+                encoderTicksToInches(leftPos),
+                encoderTicksToInches(rightPos),
+                encoderTicksToInches(frontPos)
         );
     }
 
@@ -94,9 +91,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncVels.add(frontVel);
 
         return Arrays.asList(
-                encoderTicksToInches(leftVel) * X_MULTIPLIER,
-                encoderTicksToInches(rightVel) * X_MULTIPLIER,
-                encoderTicksToInches(frontVel) * Y_MULTIPLIER
+                encoderTicksToInches(leftVel),
+                encoderTicksToInches(rightVel),
+                encoderTicksToInches(frontVel)
         );
     }
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
@@ -19,11 +20,11 @@ public class ProcessDetections {
         right,
     }
     // Initializes the master reference to use telemetry and the camera dimensions on detectTFImages.
-    public void initialize(LinearOpMode masterC) {
+    public void initialize(LinearOpMode masterC, Camera camera) {
         master = masterC;
         //masterC.telemetry.addData("test", 4);
         detectTFImages = new DetectTFImages();
-        detectTFImages.initTfod(masterC);
+        detectTFImages.initTfod(masterC, camera);
         DetectTFImages.CAMERA_WIDTH = 1920;
         DetectTFImages.CAMERA_HEIGHT = 1080;
         DetectTFImages.CAMERA_ZOOM = 2;
