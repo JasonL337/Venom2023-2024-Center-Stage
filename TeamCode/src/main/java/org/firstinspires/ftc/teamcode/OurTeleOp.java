@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @TeleOp(name = "TeleOpV2", group = "Tele")
 
 public class OurTeleOp extends OpMode {
-    // Hardware mapped by Hanut (10/24), these are the four wheels
+    // Hardware mapped by Hanut (10/24), these are the four wheels Changes made 11/8
     DcMotor frontL;
     DcMotor frontR;
     DcMotor backL;
