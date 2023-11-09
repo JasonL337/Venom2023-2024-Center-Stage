@@ -76,7 +76,9 @@ public class OurTeleOp extends OpMode {
         // gyro
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-
+        pars.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        pars.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        imu.initialize(pars);
 
 
         frontL.setDirection(DcMotor.Direction.REVERSE);
@@ -133,7 +135,7 @@ public class OurTeleOp extends OpMode {
 
         public double gyroLockAdder()
         {
-            boolean A_button = gamepad2.a;
+            boolean A_button = gamepad1.a;
             double adder = 0;
 
             if (A_button)
@@ -143,7 +145,10 @@ public class OurTeleOp extends OpMode {
                     lockHeading = returnGyroYaw();
                     startLock = false;
                 }
-                adder = returnGyroYaw() - lockHeading * .02;
+                adder = (returnGyroYaw() - lockHeading) * .02;
+            }else
+            {
+                startLock = true;
             }
             return adder;
         }
@@ -161,10 +166,10 @@ public class OurTeleOp extends OpMode {
             if (gamepad1.right_trigger > .1)
                 multiplier = .25;
 
-            frontL.setPower(((y + x + rx) - adder) * multiplier);
-            backL.setPower(((y - x + rx) - adder) * multiplier);
-            frontR.setPower(((y - x - rx) + adder) * multiplier);
-            backR.setPower(((y + x - rx) + adder) * multiplier);
+            frontL.setPower(((y + x + rx) + adder) * multiplier);
+            backL.setPower(((y - x + rx) + adder) * multiplier);
+            frontR.setPower(((y - x - rx) - adder) * multiplier);
+            backR.setPower(((y + x - rx) - adder) * multiplier);
         }
 
 
@@ -236,10 +241,14 @@ public class OurTeleOp extends OpMode {
             boolean B_button = gamepad2.b;
             if (B_button) {
                 inTake.setPower(-1);
-            } else {
+            } else if (gamepad2.right_trigger > .2) {
+                inTake.setPower(1);
+            }
+            else {
                 inTake.setPower(0);
             }
-        }
+        } //hi jason i love u
+
 
         public void changeIntakeLift()
         {
