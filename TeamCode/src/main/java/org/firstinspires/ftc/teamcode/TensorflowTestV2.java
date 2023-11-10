@@ -31,11 +31,12 @@ public class TensorflowTestV2 extends LinearOpMode implements TensorflowProp, In
         while (opModeIsActive() && !isStopRequested())
         {
             telemetry.addData("time", elapsedTime);
+            telemetry.addData("stop sign: ", processDetections.getCorrectDetection());
             telemetry.addData("pos: ", processDetections.getPos());
             //List<AprilTagDetection> dets = aprilTagPos.getDetections();
                 //telemetry.addData("height: ", aprilTagPos.getHeight(dets.get(0)));
-                double[] dists = aprilTagPos.getDist();
-                telemetry.addLine("dist-x: " + dists[0] + "\ndist-y: " + dists[1]);
+                //double[] dists = aprilTagPos.getDist();
+                //telemetry.addLine("dist-x: " + dists[0] + "\ndist-y: " + dists[1]);
                 // 159.5
                 // 14
             //processDetections.test();
