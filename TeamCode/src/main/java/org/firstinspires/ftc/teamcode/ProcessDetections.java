@@ -47,14 +47,14 @@ public class ProcessDetections {
         List<Recognition> allDetections = detectTFImages.getTFDetections();
         Recognition correctRecog = null;
         Recognition correctCupRecog = null;
-        double highestCupConf = 0;
+        double highestCupConf = 0.3;
         double highestConfidence = 0;
         for (Recognition curRecog : allDetections) {
             if (curRecog.getConfidence() > highestConfidence && curRecog.getLabel().equals("parking meter")) {
                 correctRecog = curRecog;
                 highestConfidence = curRecog.getConfidence();
             }
-            else if (curRecog.getConfidence() > highestCupConf && curRecog.getLabel().equals("cup"))
+            else if (curRecog.getConfidence() > highestCupConf && (curRecog.getLabel().equals("cup") || curRecog.getLabel().equals("sports ball")))
             {
                 correctCupRecog = curRecog;
                 highestCupConf = curRecog.getConfidence();
@@ -68,19 +68,23 @@ public class ProcessDetections {
     // returns the calculated left, middle, right position of the prop.
     public pos getPos()
     {
-        if (recognition == null)
-        {
-            recognition = getCorrectDetection();
-            return pos.notFound;
-        }
-        if (phase == 1)
+        recognition = getCorrectDetection();
+        if (phase == 1 && recognition != null)
         {
             return pos.left;
         }
-        if (phase == 2)
+        else if (phase == 2)
         {
-            return  pos.middle;
+            if (recognition == null)
+            {
+                return pos.right;
+            }
+            else
+            {
+                return  pos.middle;
+            }
         }
+        return  pos.notFound;
         /*double x = getLerpX();
         if (x > .8 || x == -1)
             return pos.right;
