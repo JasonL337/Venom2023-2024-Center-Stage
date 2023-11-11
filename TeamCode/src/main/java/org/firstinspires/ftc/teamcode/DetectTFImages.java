@@ -156,7 +156,7 @@ public class DetectTFImages {
 
 
 
-        tfod.setClippingMargins(0, upHeight, rightWidth, 0);
+        //tfod.setClippingMargins(0, upHeight, rightWidth, 0);
         // New clipping code
 
 
@@ -198,7 +198,7 @@ public class DetectTFImages {
             //visionPortal = camera.getBuilder().build();
 
             // Set confidence threshold for TFOD recognitions, at any time.
-            tfod.setMinResultConfidence(0.1f);
+            tfod.setMinResultConfidence(0.05f);
             // From camera, left is positive, down is positive
             tfod.setZoom(CAMERA_ZOOM);
 

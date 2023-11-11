@@ -11,13 +11,18 @@ public class ProcessDetections {
     DetectTFImages detectTFImages;
     LinearOpMode master;
 
+    public int phase = 0;
+
     public static double xPosMiddle = .5;
+
+    Recognition recognition = null;
 
     public enum pos
     {
         left,
         middle,
         right,
+        notFound,
     }
     // Initializes the master reference to use telemetry and the camera dimensions on detectTFImages.
     public void initialize(LinearOpMode masterC, Camera camera) {
@@ -31,30 +36,57 @@ public class ProcessDetections {
 
     }
 
+    // Setting the phase variable to the current phase of the auto it's in
+    public void setPhase(int p)
+    {
+        phase = p;
+    }
+
     // method returns 1 recog ("stop sign", pos, conf), give me list of all recognitions
     public Recognition getCorrectDetection() {
         List<Recognition> allDetections = detectTFImages.getTFDetections();
         Recognition correctRecog = null;
+        Recognition correctCupRecog = null;
+        double highestCupConf = 0;
         double highestConfidence = 0;
         for (Recognition curRecog : allDetections) {
             if (curRecog.getConfidence() > highestConfidence && curRecog.getLabel().equals("parking meter")) {
                 correctRecog = curRecog;
                 highestConfidence = curRecog.getConfidence();
-
+            }
+            else if (curRecog.getConfidence() > highestCupConf && curRecog.getLabel().equals("cup"))
+            {
+                correctCupRecog = curRecog;
+                highestCupConf = curRecog.getConfidence();
             }
         }
-        return correctRecog;
+        if (correctRecog != null)
+            return correctRecog;
+        return correctCupRecog;
     }
 
     // returns the calculated left, middle, right position of the prop.
     public pos getPos()
     {
-        double x = getLerpX();
+        if (recognition == null)
+        {
+            recognition = getCorrectDetection();
+            return pos.notFound;
+        }
+        if (phase == 1)
+        {
+            return pos.left;
+        }
+        if (phase == 2)
+        {
+            return  pos.middle;
+        }
+        /*double x = getLerpX();
         if (x > .8 || x == -1)
             return pos.right;
         else if (x > .25)
             return pos.middle;
-        return pos.left;
+        return pos.left;*/
     }
 
     // Returns the true position of the x dimension. -1 if nothing

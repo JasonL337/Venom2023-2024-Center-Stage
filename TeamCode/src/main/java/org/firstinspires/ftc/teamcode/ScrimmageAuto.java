@@ -122,7 +122,7 @@ public class ScrimmageAuto extends LinearOpMode implements VisionPortalUser, Ten
         }
 
 
-        return 0;
+        //return 0;
     }
     public void initVisionPortal()
     {
