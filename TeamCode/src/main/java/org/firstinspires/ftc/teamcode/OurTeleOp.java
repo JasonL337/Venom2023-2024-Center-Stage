@@ -58,7 +58,7 @@ public class OurTeleOp extends OpMode {
         frontL = hardwareMap.dcMotor.get("frontLeftMotor");
         frontR = hardwareMap.dcMotor.get("frontRightMotor");
         backL = hardwareMap.dcMotor.get("backLeftMotor");
-        backR = hardwareMap.dcMotor.get("backRightMotor");
+        backR = hardwareMap.dcMotor.get("backRightMotor");//
 
         // Intake motor
         inTake = hardwareMap.dcMotor.get("intake");
