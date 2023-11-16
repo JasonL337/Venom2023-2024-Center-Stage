@@ -30,7 +30,11 @@ public class OurTeleOp extends OpMode {
 
     // Gyro locking and starting positions
     double lockHeading = 0;
+
+    double playerDegree = 0;
     boolean startLock = true;
+
+    boolean playerRelative = false;
     boolean isBoxOpen = false;
     boolean isBoxDown = false;
 
@@ -40,6 +44,8 @@ public class OurTeleOp extends OpMode {
 
     ElapsedTime dpadUp = new ElapsedTime();
     ElapsedTime upArmTime = new ElapsedTime();
+
+    ElapsedTime playerRelTime = new ElapsedTime();
     boolean armUp = false;
     @Override
     public void init() {
@@ -124,6 +130,8 @@ public class OurTeleOp extends OpMode {
 
         runDriver2Methods();
 
+        telemetry.update();
+
 
         }
 
@@ -131,6 +139,7 @@ public class OurTeleOp extends OpMode {
         public void runDriver1Methods()
         {
             runDriveTrain();
+            setPlayerRelative();
         }
 
         public double gyroLockAdder()
@@ -153,6 +162,23 @@ public class OurTeleOp extends OpMode {
             return adder;
         }
 
+        public void setPlayerRelative()
+        {
+            if (gamepad1.y && playerRelTime.milliseconds() > 500)
+            {
+                if (playerRelative)
+                {
+                    playerRelative = false;
+                }
+                else
+                {
+                    playerRelative = true;
+                    playerDegree = returnGyroYaw();
+                }
+                playerRelTime.reset();
+            }
+        }
+
         public void runDriveTrain()
         {
             double y = -gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y);
@@ -166,10 +192,62 @@ public class OurTeleOp extends OpMode {
             if (gamepad1.right_trigger > .1)
                 multiplier = .25;
 
-            frontL.setPower(((y + x + rx) + adder) * multiplier);
-            backL.setPower(((y - x + rx) + adder) * multiplier);
-            frontR.setPower(((y - x - rx) - adder) * multiplier);
-            backR.setPower(((y + x - rx) - adder) * multiplier);
+            if (!playerRelative) {
+                frontL.setPower(((y + x + rx) + adder) * multiplier);
+                backL.setPower(((y - x + rx) + adder) * multiplier);
+                frontR.setPower(((y - x - rx) - adder) * multiplier);
+                backR.setPower(((y + x - rx) - adder) * multiplier);
+            }
+            else
+            {
+                double trueDiff = getTrueAngle(playerDegree);
+                double joyAngle = Math.toDegrees(Math.atan2(y, x));
+                double trueJoy = 90 - joyAngle;
+                if (trueJoy > 180)
+                {
+                    trueJoy = (trueJoy - 360);
+                }
+                double cos = Math.cos(Math.toRadians(trueJoy - trueDiff));
+                double sin = Math.sin(Math.toRadians(trueJoy - trueDiff));
+                telemetry.addData("joyAngle", trueJoy);
+                telemetry.addData("y", y);
+                telemetry.addData("x", x);
+                telemetry.addData("true diff:", trueDiff);
+                telemetry.addData("true diff:", trueJoy - trueDiff);
+                telemetry.addData("cos:", cos);
+                telemetry.addData("sin:", sin);
+                /*
+                frontL.setPower((y * cos + x * sin + rx) * multiplier);
+                backL.setPower((y * cos - x * sin + rx) * multiplier);
+                frontR.setPower((y * cos - x * sin - rx) * multiplier);
+                backR.setPower((y * cos + x * sin - rx) * multiplier);
+                */
+
+                frontL.setPower((Math.abs(y) * cos + Math.abs(x) * sin + rx) * multiplier);
+                backL.setPower((Math.abs(y) * cos - Math.abs(x) * sin + rx) * multiplier);
+                frontR.setPower((Math.abs(y) * cos - Math.abs(x) * sin - rx) * multiplier);
+                backR.setPower((Math.abs(y) * cos + Math.abs(x) * sin - rx) * multiplier);
+
+
+            }
+        }
+
+        public double getTrueAngle(double heading)
+        {
+            double angle = returnGyroYaw();
+            if (Math.abs(heading - angle) < 180 )
+            {
+                return heading - angle;
+            }
+            if (heading - angle >= 180)
+            {
+                return  360 - heading - angle;
+            }
+            if (angle - heading <= -180)
+            {
+                return angle - heading + 360;
+            }
+            return heading - angle;
         }
 
 
