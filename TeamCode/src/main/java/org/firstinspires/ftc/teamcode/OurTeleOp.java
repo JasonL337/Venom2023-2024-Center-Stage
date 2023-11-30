@@ -222,11 +222,11 @@ public class OurTeleOp extends OpMode {
                 frontR.setPower((y * cos - x * sin - rx) * multiplier);
                 backR.setPower((y * cos + x * sin - rx) * multiplier);
                 */
-
-                frontL.setPower((Math.abs(y) * cos + Math.abs(x) * sin + rx) * multiplier);
-                backL.setPower((Math.abs(y) * cos - Math.abs(x) * sin + rx) * multiplier);
-                frontR.setPower((Math.abs(y) * cos - Math.abs(x) * sin - rx) * multiplier);
-                backR.setPower((Math.abs(y) * cos + Math.abs(x) * sin - rx) * multiplier);
+                double power = Math.min(Math.abs(y) + Math.abs(x), 1);
+                frontL.setPower((power * cos + power * sin + rx + adder) * multiplier);
+                backL.setPower((power * cos - power * sin + rx + adder) * multiplier);
+                frontR.setPower((power * cos - power * sin - rx - adder) * multiplier);
+                backR.setPower((power * cos + power * sin - rx - adder) * multiplier);
 
 
             }
