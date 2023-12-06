@@ -17,7 +17,6 @@ public class OurTeleOp extends OpMode {
     DcMotor frontR;
     DcMotor backL;
     DcMotor backR;
-    // These motors are yet to be hardware mapped
     DcMotor liftR;
     DcMotor liftL;
     Servo armL;

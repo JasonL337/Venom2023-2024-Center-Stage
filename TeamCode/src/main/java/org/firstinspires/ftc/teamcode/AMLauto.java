@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "AML 1 Auto", group = "AML 1 Code`")
@@ -40,6 +39,43 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         // insert your tensorflow detections here, we still have to do the rotation
         processDetections.setPhase(1);
         pos = processDetections.getPos();
+        if(/* insert tensorflow detection for the right*/){
+            dt.turn(90,1);
+            dt.moveforward(in2rev(60),0.5);
+            dt.liftR.setPower(1);
+            dt.liftL.setPower(1);
+            sleep(300);
+            dt.liftR.setPower(0);
+            dt.liftL.setPower(0);
+            dt.boxOutTake.setPosition(1 /* idk if this is the correct position */);
+        }
+
+        if(/* insert tensorflow detection for the middle*/){
+            dt.turn(90,1);
+            dt.straferight(5,0.5);
+            dt.moveforward(in2rev(50),0.5);
+            dt.liftR.setPower(1);
+            dt.liftL.setPower(1);
+            sleep(300);
+            dt.liftR.setPower(0);
+            dt.liftL.setPower(0);
+            dt.boxOutTake.setPosition(1 /* idk if this is the correct position */);
+        }
+
+        if(/* insert tensorflow detection for the right*/){
+            dt.turn(90,1);
+            dt.straferight(10,0.5);
+            dt.moveforward(in2rev(50),0.5);
+            dt.liftR.setPower(1);
+            dt.liftL.setPower(1);
+            sleep(300);
+            dt.liftR.setPower(0);
+            dt.liftL.setPower(0);
+            dt.boxOutTake.setPosition(1 /* idk if this is the correct position */);
+        }
+
+
+
         // shoots out the pixel
         ElapsedTime time = new ElapsedTime();
         while(time.milliseconds() < 1000) {

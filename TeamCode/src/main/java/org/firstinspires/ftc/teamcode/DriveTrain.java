@@ -17,11 +17,15 @@ public class DriveTrain {
 
     public DcMotor inTake;
 
+    public DcMotor liftL;
+
+    public DcMotor liftR;
+
     Servo armR;
 
     Servo armL;
 
-
+    Servo boxOutTake;
 
     //IMU imu;
 
@@ -42,6 +46,10 @@ public class DriveTrain {
         inTake = auto.hardwareMap.dcMotor.get("intake");
         armR = auto.hardwareMap.servo.get("armR");
         armL = auto.hardwareMap.servo.get("armL");
+        liftL = auto.hardwareMap.dcMotor.get("liftLeftMotor");
+        liftR = auto.hardwareMap.dcMotor.get("liftRightMotor");
+        boxOutTake = auto.hardwareMap.servo.get("outtake");
+
 
 
         backL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -127,6 +135,13 @@ public class DriveTrain {
             backL.setPower(0);
             frontR.setPower(0);
             frontL.setPower(0);
+
+    }
+
+    // raise the lifts for the outtake
+    public void raiselifts(double seconds) {
+        liftL.setPower(1);
+        liftR.setPower(1);
 
     }
 
