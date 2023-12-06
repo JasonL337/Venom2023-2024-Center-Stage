@@ -39,7 +39,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         // insert your tensorflow detections here, we still have to do the rotation
         processDetections.setPhase(1);
         pos = processDetections.getPos();
-        if(/* insert tensorflow detection for the right*/){
+        if(true){
             dt.turn(90,1);
             dt.moveforward(in2rev(60),0.5);
             dt.liftR.setPower(1);
@@ -50,7 +50,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             dt.boxOutTake.setPosition(1 /* idk if this is the correct position */);
         }
 
-        if(/* insert tensorflow detection for the middle*/){
+        if(false){
             dt.turn(90,1);
             dt.straferight(5,0.5);
             dt.moveforward(in2rev(50),0.5);
@@ -62,7 +62,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             dt.boxOutTake.setPosition(1 /* idk if this is the correct position */);
         }
 
-        if(/* insert tensorflow detection for the right*/){
+        if(false){
             dt.turn(90,1);
             dt.straferight(10,0.5);
             dt.moveforward(in2rev(50),0.5);
