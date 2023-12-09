@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,6 +27,9 @@ public class OurTeleOp extends OpMode {
     Servo boxInTake;
     Servo boxL;
     Servo boxR;
+    CRServo processing;
+    DcMotor hangL;
+    DcMotor hangR;
 
     // Gyro locking and starting positions
     double lockHeading = 0;
@@ -57,7 +61,8 @@ public class OurTeleOp extends OpMode {
         frontL = hardwareMap.dcMotor.get("frontLeftMotor");
         frontR = hardwareMap.dcMotor.get("frontRightMotor");
         backL = hardwareMap.dcMotor.get("backLeftMotor");
-        backR = hardwareMap.dcMotor.get("backRightMotor");//
+        backR = hardwareMap.dcMotor.get("backRightMotor");
+
 
         // Intake motor
         inTake = hardwareMap.dcMotor.get("intake");
@@ -85,6 +90,13 @@ public class OurTeleOp extends OpMode {
         pars.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(pars);
 
+        // Processing Servo
+        processing = hardwareMap.crservo.get("processing");
+
+        // Hanging motors
+        hangL = hardwareMap.dcMotor.get("hangL");
+        hangR = hardwareMap.dcMotor.get("hangR");
+
 
         frontL.setDirection(DcMotor.Direction.REVERSE);
         backL.setDirection(DcMotor.Direction.REVERSE);
@@ -96,6 +108,9 @@ public class OurTeleOp extends OpMode {
         inTake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hangL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
     }
 
@@ -119,8 +134,10 @@ public class OurTeleOp extends OpMode {
 
 
         /* Gamepad 2:
-        B button pressed and held = Intake power on
+        B button pressed and held = Intake power on (includes processing wheel)
         X button pressed = set position of giant arm up/down
+        A button pressed = move hanging up
+        Y button = move hanging down
         Left joystick = move lift up/down
         Right trigger pressed and held = turtle lift
         Right button lower box
@@ -259,6 +276,7 @@ public class OurTeleOp extends OpMode {
             changeLiftPos();
             changeIntakePower();
             changeIntakeLift();
+            hanging();
         }
 
         public void changeBoxUpDown()
@@ -274,7 +292,6 @@ public class OurTeleOp extends OpMode {
                 boxR.setPosition(1);
             }
         }
-
 
         public void changeBoxPos()
         {
@@ -305,6 +322,29 @@ public class OurTeleOp extends OpMode {
             }
         }
 
+        public void hanging() {
+
+            boolean A_button = gamepad1.a;
+            if (A_button) {
+
+                hangL.setPower(1);
+                hangR.setPower(1);
+            }
+
+            boolean Y_button = gamepad1.y;
+            if (Y_button) {
+                hangL.setPower(-1);
+                hangR.setPower(-1);
+
+            } else {
+
+                hangL.setPower(0);
+                hangR.setPower(0);
+
+
+            }
+        }
+//luke was here
         public void changeLiftPos()
         {
             double leftJoy = gamepad2.left_stick_y;
@@ -318,15 +358,18 @@ public class OurTeleOp extends OpMode {
             boolean B_button = gamepad2.b;
             if (B_button) {
                 inTake.setPower(-1);
+                processing.setPower(-1);
             } else if (gamepad2.right_trigger > .2) {
                 inTake.setPower(1);
+                processing.setPower(1);
             }
             else {
                 inTake.setPower(0);
+                processing.setPower(0);
             }
         } //hi jason i love u
 
-
+//i dont love you
         public void changeIntakeLift()
         {
             boolean X_button = gamepad2.x;

@@ -31,7 +31,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         sleep(3000);
         // lowers the intake
         dt.lowerarms();
-        // sets the heading back to zero in order to start tfod detection
+        // sets the heading back to zero in order to start tfod
         dt.turn(0, .4);
         sleep(3000);
         telemetry.addData("pos", dt.frontR.getCurrentPosition());
