@@ -31,7 +31,7 @@ public class DriveTrain {
 
     //IMU imu;
 
-    public BNO055IMU imu;
+    //public BNO055IMU imu;
     BNO055IMU.Parameters pars = new BNO055IMU.Parameters();
     Orientation angles;
     LinearOpMode master;
@@ -75,11 +75,11 @@ public class DriveTrain {
         frontL.setDirection(DcMotor.Direction.REVERSE);
         backL.setDirection(DcMotor.Direction.REVERSE);
 
-        imu = auto.hardwareMap.get(BNO055IMU.class, "imu");
+        //imu = auto.hardwareMap.get(BNO055IMU.class, "imu");
 
         pars.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         pars.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu.initialize(pars);
+        //imu.initialize(pars);
     }
 
         public void turn(double heading, double power)
@@ -194,8 +194,9 @@ public class DriveTrain {
 
     public double returnGyroYaw()
     {
-        angles = imu.getAngularOrientation();
-        return angles.firstAngle;
+        //angles = imu.getAngularOrientation();
+        //return angles.firstAngle;
+        return 0;
     }
 
 }
