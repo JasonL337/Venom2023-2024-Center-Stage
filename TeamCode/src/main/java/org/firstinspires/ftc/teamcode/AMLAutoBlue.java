@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "AML 1 Auto", group = "AML 1 Code`")
-public class AMLauto extends LinearOpMode implements VisionPortalUser, TensorflowProp{
+@Autonomous(name = "AML 1 Auto Blue", group = "AML 1 Code`")
+public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
     ProcessDetections processDetections;
     ProcessDetections.pos pos;
@@ -37,11 +37,11 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         drive.setPoseEstimate(startPose);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
                 .forward(13)
-                .strafeRight(14)
+                .strafeLeft(22)
                 .waitSeconds(2)
                 .build();
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .strafeLeft(15)
+                .strafeRight(19)
                 //.forward(7)
                 .waitSeconds(1)
                 .build();

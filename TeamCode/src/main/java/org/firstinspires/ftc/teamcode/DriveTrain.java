@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,6 +27,7 @@ public class DriveTrain {
     Servo armL;
 
     Servo boxOutTake;
+    CRServo processing;
 
     //IMU imu;
 
@@ -47,8 +49,9 @@ public class DriveTrain {
         armR = auto.hardwareMap.servo.get("armR");
         armL = auto.hardwareMap.servo.get("armL");
         liftL = auto.hardwareMap.dcMotor.get("liftLeftMotor");
-        liftR = auto.hardwareMap.dcMotor.get("liftRightMotor");
+        //liftR = auto.hardwareMap.dcMotor.get("liftRightMotor");
         boxOutTake = auto.hardwareMap.servo.get("outtake");
+        processing = auto.hardwareMap.crservo.get("processing");
 
 
 
@@ -178,6 +181,7 @@ public class DriveTrain {
     }
 
     public void liftarms() {
+        processing.setPower(-1);
         armL.setPosition(1);
         armR.setPosition(0);
 

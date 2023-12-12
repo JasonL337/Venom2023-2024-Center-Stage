@@ -18,7 +18,6 @@ public class OurTeleOp extends OpMode {
     DcMotor frontR;
     DcMotor backL;
     DcMotor backR;
-    DcMotor liftR;
     DcMotor liftL;
     Servo armL;
     DcMotor inTake;
@@ -30,7 +29,7 @@ public class OurTeleOp extends OpMode {
     CRServo processing;
     DcMotor hangL;
     DcMotor hangR;
-
+    Servo dronelauncher;
     // Gyro locking and starting positions
     double lockHeading = 0;
 
@@ -69,7 +68,6 @@ public class OurTeleOp extends OpMode {
 
         // Lift motors
         liftL = hardwareMap.dcMotor.get("liftLeftMotor");
-        liftR = hardwareMap.dcMotor.get("liftRightMotor");
 
         // Left and right sides of giant arm
         armR = hardwareMap.servo.get("armR");
@@ -97,6 +95,9 @@ public class OurTeleOp extends OpMode {
         hangL = hardwareMap.dcMotor.get("hangL");
         hangR = hardwareMap.dcMotor.get("hangR");
 
+        // Drone Launcher
+        dronelauncher = hardwareMap.servo.get("dronelauncher");
+
 
         frontL.setDirection(DcMotor.Direction.REVERSE);
         backL.setDirection(DcMotor.Direction.REVERSE);
@@ -107,7 +108,6 @@ public class OurTeleOp extends OpMode {
         frontR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         inTake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -277,8 +277,18 @@ public class OurTeleOp extends OpMode {
             changeIntakePower();
             changeIntakeLift();
             hanging();
+            shootdrone();
         }
 
+        public void shootdrone() {
+            double left_trigger = gamepad2.left_trigger;
+            if (left_trigger > 0.3) {
+                dronelauncher.setPosition(1);
+            }
+            else {
+                dronelauncher.setPosition(0);
+            }
+        }
         public void changeBoxUpDown()
         {
             boolean leftBump = gamepad2.left_bumper;
@@ -296,7 +306,7 @@ public class OurTeleOp extends OpMode {
         public void changeBoxPos()
         {
             boolean topDpadButton = gamepad2.dpad_up;
-            boolean Y_button = gamepad2.y;
+            boolean Y_button = gamepad2.dpad_down;
 
             if (topDpadButton && dpadUp.milliseconds() > 500) {
                 if (isBoxOpen) {
@@ -308,33 +318,33 @@ public class OurTeleOp extends OpMode {
             }
             if (isBoxOpen)
             {
-                boxInTake.setPosition(1);
+                //boxInTake.setPosition(1);
             }
             else
             {
-                boxInTake.setPosition(0);
+                //boxInTake.setPosition(0);
             }
 
             if (Y_button) {
-                boxOutTake.setPosition(1);
-            } else {
                 boxOutTake.setPosition(0);
+            } else {
+                boxOutTake.setPosition(1);
             }
         }
 
         public void hanging() {
 
-            boolean A_button = gamepad1.a;
+            boolean A_button = gamepad2.a;
             if (A_button) {
 
-                hangL.setPower(1);
-                hangR.setPower(1);
-            }
-
-            boolean Y_button = gamepad1.y;
-            if (Y_button) {
                 hangL.setPower(-1);
                 hangR.setPower(-1);
+            }
+
+            boolean Y_button = gamepad2.y;
+            if (Y_button) {
+                hangL.setPower(-0.3);
+                hangR.setPower(-0.3);
 
             } else {
 
@@ -350,7 +360,6 @@ public class OurTeleOp extends OpMode {
             double leftJoy = gamepad2.left_stick_y;
             double multiplier = Math.min(1, 1.2 - gamepad2.right_trigger);
             liftL.setPower(leftJoy * multiplier);
-            liftR.setPower(leftJoy * multiplier);
         }
 
         public void changeIntakePower()
@@ -358,10 +367,10 @@ public class OurTeleOp extends OpMode {
             boolean B_button = gamepad2.b;
             if (B_button) {
                 inTake.setPower(-1);
-                processing.setPower(-1);
+                processing.setPower(1);
             } else if (gamepad2.right_trigger > .2) {
                 inTake.setPower(1);
-                processing.setPower(1);
+                processing.setPower(-1);
             }
             else {
                 inTake.setPower(0);
