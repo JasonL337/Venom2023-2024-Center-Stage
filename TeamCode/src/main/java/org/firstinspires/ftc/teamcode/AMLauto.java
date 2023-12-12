@@ -36,25 +36,25 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .forward(4)
-                .splineTo(new Vector2d(42, -57), Math.toRadians(90))
+                .forward(11)
+                .strafeRight(12)
                 .waitSeconds(2)
                 .build();
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .strafeLeft(7)
+                .strafeLeft(12)
                 //.forward(7)
                 .waitSeconds(1)
                 .build();
         TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(trajSeq2.end())
-                .forward(5)
+                .forward(8)
                 .turn(Math.toRadians(90))
                 .build();
         TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(trajSeq2.end())
-                .forward(5)
+                .forward(6)
                 .turn(Math.toRadians(180))
                 .build();
         TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(trajSeq2.end())
-                .forward(5)
+                .forward(6)
                 .turn(Math.toRadians(270))
                 .build();
         TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(trajSeq3Right.end())
