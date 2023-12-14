@@ -292,14 +292,13 @@ public class OurTeleOp extends OpMode {
         public void changeBoxUpDown()
         {
             boolean leftBump = gamepad2.left_bumper;
-            boolean rightBump = gamepad2.right_bumper;
             if (leftBump) {
                 boxL.setPosition(1);
-                boxR.setPosition(0);
+                boxR.setPosition(-1);
             }
-            if (rightBump) {
-                boxL.setPosition(0);
-                boxR.setPosition(1);
+            else {
+                boxL.setPosition(0.4);
+                boxR.setPosition(0);
             }
         }
 
