@@ -218,7 +218,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 16, Math.toRadians(-90)))
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 16, Math.toRadians(0)))
                     .back(3)
                     .build();
             return trajSeq3Left;
@@ -228,7 +228,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 16, Math.toRadians(90)))
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 16, Math.toRadians(0)))
                     .back(3)
                     .build();
             return trajSeq3Left2;
@@ -242,7 +242,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(180))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 16, Math.toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 16, Math.toRadians(270)))
                     .back(6)
                     .build();
             return trajSeq3Middle;
