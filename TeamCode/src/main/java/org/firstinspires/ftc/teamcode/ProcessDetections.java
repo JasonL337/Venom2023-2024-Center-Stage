@@ -48,7 +48,7 @@ public class ProcessDetections {
         Recognition correctRecog = null;
         Recognition correctCupRecog = null;
         double highestCupConf = 0.3;
-        double highestConfidence = 0;
+        double highestConfidence = 0.2;
         for (Recognition curRecog : allDetections) {
             if (curRecog.getConfidence() > highestConfidence && curRecog.getLabel().equals("parking meter")) {
                 correctRecog = curRecog;
@@ -66,18 +66,22 @@ public class ProcessDetections {
     }
 
     // returns the calculated left, middle, right position of the prop.
-    public pos getPos()
+    public pos getPos(boolean right)
     {
         recognition = getCorrectDetection();
         if (phase == 1 && recognition != null)
         {
-            return pos.left;
+            if (!right)
+                return pos.left;
+            else return pos.right;
         }
         else if (phase == 2)
         {
             if (recognition == null)
             {
-                return pos.right;
+                if (!right)
+                    return pos.right;
+                else return pos.left;
             }
             else
             {

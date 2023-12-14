@@ -62,7 +62,7 @@ public class ScrimmageAuto extends LinearOpMode implements VisionPortalUser, Ten
 
         waitForStart();
         ElapsedTime stateTime = new ElapsedTime();
-        pos = processDetections.getPos();
+        pos = processDetections.getPos(true);
         while (opModeIsActive() && !isStopRequested())
         {
             while (stateTime.milliseconds() < 1000)
