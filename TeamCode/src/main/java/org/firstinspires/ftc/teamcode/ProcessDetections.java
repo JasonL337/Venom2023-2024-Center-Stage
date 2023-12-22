@@ -54,7 +54,7 @@ public class ProcessDetections {
                 correctRecog = curRecog;
                 highestConfidence = curRecog.getConfidence();
             }
-            else if (curRecog.getConfidence() > highestCupConf && (curRecog.getLabel().equals("cup") || curRecog.getLabel().equals("sports ball")))
+            else if (curRecog.getConfidence() > highestCupConf && (curRecog.getLabel().equals("cup") || curRecog.getLabel().equals("sports ball") || curRecog.getLabel().equals("bench")) && curRecog.getWidth() > 180)
             {
                 correctCupRecog = curRecog;
                 highestCupConf = curRecog.getConfidence();

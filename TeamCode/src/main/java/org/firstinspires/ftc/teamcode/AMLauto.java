@@ -173,9 +173,9 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
                     ///////
 
                     TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
-                            .forward(5)
+                            .forward(2)
                             //.turn(Math.toRadians(0))
-                            .splineTo(new Vector2d(50, -68), 0)
+                            .lineToLinearHeading(new Pose2d(60, -62, Math.toRadians(0)))
                             .build();
                     drive.followTrajectorySequence(trajSeq4Right);
                     //drive.followTrajectorySequence(trajSeq3);
@@ -204,8 +204,8 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
     public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive, Pose2d end)
     {
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(end)
-                .strafeLeft(12)
-                //.forward(7)
+                .strafeLeft(10)
+                .forward(5)
                 .waitSeconds(1)
                 .build();
         return  trajSeq2;
@@ -218,18 +218,19 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 16, Math.toRadians(0)))
-                    .back(3)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 22, Math.toRadians(0)))
+                    .back(9)
                     .build();
             return trajSeq3Left;
         }
         else
         {
             TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(end)
+                    .forward(6)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 16, Math.toRadians(0)))
-                    .back(3)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 22, Math.toRadians(0)))
+                    //.back(3)
                     .build();
             return trajSeq3Left2;
         }
@@ -242,8 +243,9 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(180))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 16, Math.toRadians(270)))
-                    .back(6)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 15, Math.toRadians(90)))
+                    .turn(Math.toRadians(180))
+                    .back(1)
                     .build();
             return trajSeq3Middle;
         }
@@ -252,7 +254,8 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             TrajectorySequence trajSeq3Middle3 = drive.trajectorySequenceBuilder(end)
                     .forward(5)
                     //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 16, Math.toRadians(0)))
+                    //.turn(Math.toRadians(90))
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 15, Math.toRadians(0)))
                     //.back(3)
                     .build();
             return trajSeq3Middle3;
@@ -266,16 +269,16 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 16, Math.toRadians(180)))
-                    .back(3)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 22, Math.toRadians(180)))
+                    .back(4)
                     .build();
             return trajSeq3Right;
         }
         else
         {
             TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
-                    .forward(5)
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY(), Math.toRadians(0)))
+                    .forward(4)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 22, Math.toRadians(0)))
                     //.strafeLeft(13)
                     //.turn(Math.toRadians(180))
                     .build();
