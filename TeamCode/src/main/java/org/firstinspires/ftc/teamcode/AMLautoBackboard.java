@@ -73,7 +73,6 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
             //Pose2d end3;
 
 
-
             ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
 
 
@@ -185,6 +184,8 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                             .build();
                     drive.followTrajectorySequence(trajSeq4Right);
                     //drive.followTrajectorySequence(trajSeq3);
+
+
                 }
                 else
                 {
@@ -201,7 +202,7 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(end)
                 //.forward(4)
                 //.strafeRight(11)
-                .lineToLinearHeading(new Pose2d(end.getX() + 11, end.getY() + 4, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(end.getX() + 11, end.getY() + 8, Math.toRadians(90)))
                 .waitSeconds(2)
                 .build();
         return  trajSeq;

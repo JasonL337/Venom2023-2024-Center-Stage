@@ -140,6 +140,7 @@ public class OurTeleOp extends OpMode {
         Y button = move hanging down
         Left joystick = move lift up/down
         Right trigger pressed and held = turtle lift
+        Left Trigger Pressed = Drone Launcher
         Right button lower box
         Left button raise box
          */
@@ -292,13 +293,14 @@ public class OurTeleOp extends OpMode {
         public void changeBoxUpDown()
         {
             boolean leftBump = gamepad2.left_bumper;
+            boolean rightBump = gamepad2.right_bumper;
             if (leftBump) {
                 boxL.setPosition(1);
                 boxR.setPosition(-1);
             }
-            else {
-                boxL.setPosition(0.4);
-                boxR.setPosition(0);
+            else if (rightBump){
+                boxL.setPosition(0.6);
+                boxR.setPosition(-0.6);
             }
         }
 

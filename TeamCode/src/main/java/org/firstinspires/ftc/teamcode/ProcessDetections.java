@@ -65,7 +65,7 @@ public class ProcessDetections {
         return correctCupRecog;
     }
 
-    // returns the calculated left, middle, right position of the prop.
+    // returns the calculated left, middle, and right position of the prop
     public pos getPos(boolean right)
     {
         recognition = getCorrectDetection();

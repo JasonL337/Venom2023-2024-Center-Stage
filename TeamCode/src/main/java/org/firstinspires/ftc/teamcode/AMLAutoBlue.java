@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
-
-@Autonomous(name = "AML 1 Auto Left", group = "AML 1 Code`")
+//luke was here
+@Autonomous(name = "AML 1 Auto Blue", group = "AML 1 Code`")
 @Config
 public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
@@ -19,7 +19,7 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
 
     public static int angle = 0;
     public static boolean turnTest = false;
-
+//slay
 
     public int in2rev(double inches){
         return (int) Math.round((inches/(4 * Math.PI) * 537.7));
@@ -175,7 +175,7 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
                 TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
                         .forward(2)
                         //.turn(Math.toRadians(0))
-                        .lineToLinearHeading(new Pose2d(60, 62, Math.toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(70, 65 , Math.toRadians(0)))
                         .build();
                 drive.followTrajectorySequence(trajSeq4Right);
                 //drive.followTrajectorySequence(trajSeq3);
@@ -195,7 +195,7 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(end)
                 //.forward(4)
                 //.strafeRight(11)
-                .lineToLinearHeading(new Pose2d(end.getX() + 11, end.getY() - 4, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(end.getX() + 11, end.getY() - 8, Math.toRadians(270)))
                 .waitSeconds(2)
                 .build();
         return  trajSeq;
@@ -218,18 +218,18 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
             TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 22, Math.toRadians(180)))
-                    .back(4)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 28, Math.toRadians(180)))
+                    .back(7)
                     .build();
             return trajSeq3Left;
         }
         else
         {
             TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(end)
-                    .forward(5)
+                    .forward(6)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 22, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 28, Math.toRadians(0)))
                     //.back(3)
                     .build();
             return trajSeq3Left2;
@@ -243,9 +243,10 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
             TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(180))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 15, Math.toRadians(270)))
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 12, Math.toRadians(270)))
                     .turn(Math.toRadians(180))
                     .back(1)
+
                     .build();
             return trajSeq3Middle;
         }
@@ -269,20 +270,27 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
             TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 22, Math.toRadians(0)))
-                    .back(7)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 29, Math.toRadians(0)))
+                    .back(5)
                     .build();
             return trajSeq3Right; // test for 1/2
         }
         else
         {
             TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
+                    .forward(4)
+                    .strafeLeft(15)
+                    .turn(Math.toRadians(180))
+                    .build();
+            return trajSeq3Right2;
+
+            /*TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
                     .forward(5)
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 22, Math.toRadians(0)))
                     //.strafeLeft(13)
                     //.turn(Math.toRadians(180))
                     .build();
-            return trajSeq3Right2;
+            return trajSeq3Right2;*/
         }
     }
 
