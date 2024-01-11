@@ -111,6 +111,9 @@ public class OurTeleOp extends OpMode {
         hangR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        boxL.setPosition(0.6);
+        boxR.setPosition(-0.6);
+
 
     }
 
@@ -284,10 +287,10 @@ public class OurTeleOp extends OpMode {
         public void shootdrone() {
             double left_trigger = gamepad2.left_trigger;
             if (left_trigger > 0.3) {
-                dronelauncher.setPosition(1);
+                dronelauncher.setPosition(.55);
             }
             else {
-                dronelauncher.setPosition(0);
+                dronelauncher.setPosition(.5);
             }
         }
         public void changeBoxUpDown()
@@ -296,11 +299,11 @@ public class OurTeleOp extends OpMode {
             boolean rightBump = gamepad2.right_bumper;
             if (leftBump) {
                 boxL.setPosition(1);
-                boxR.setPosition(-1);
+                boxR.setPosition(1);
             }
             else if (rightBump){
                 boxL.setPosition(0.6);
-                boxR.setPosition(-0.6);
+                boxR.setPosition(0.6);
             }
         }
 
@@ -368,14 +371,14 @@ public class OurTeleOp extends OpMode {
             boolean B_button = gamepad2.b;
             if (B_button) {
                 inTake.setPower(-1);
-                processing.setPower(1);
+                // processing.setPower(1);
             } else if (gamepad2.right_trigger > .2) {
                 inTake.setPower(1);
-                processing.setPower(-1);
+                //processing.setPower(-1);
             }
             else {
                 inTake.setPower(0);
-                processing.setPower(0);
+                //processing.setPower(0);
             }
         } //hi jason i love u
 

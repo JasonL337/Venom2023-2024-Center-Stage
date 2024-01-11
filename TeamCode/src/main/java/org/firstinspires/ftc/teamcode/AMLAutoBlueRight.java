@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "AML 1 Auto", group = "AML 1 Code`")
+@Autonomous(name = "AML 1 Auto Blue Right", group = "AML 1 Code`")
 @Config
-public class AMLauto extends LinearOpMode implements VisionPortalUser, TensorflowProp{
+public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
     ProcessDetections processDetections;
     ProcessDetections.pos pos;
@@ -49,48 +49,48 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
 
 
         ////// INITIALIZING THE STARTING POSITION OF THE AUTO PATHING USING startPose
-            drive.setPoseEstimate(startPose);
+        drive.setPoseEstimate(startPose);
 
 
         ////// CREATING THE FIRST TRAJECTORY SEQUENCE. THIS MAINTAINS THE SAME HEADING AS IT
         ////// MOVES DIAGONALLY TO OUR FIRST SCAN AREA ON THE RIGHT POSITION.
-            TrajectorySequence trajSeq = returnFirstTraj(drive, startPose);
+        TrajectorySequence trajSeq = returnFirstTraj(drive, startPose);
 
 
         ////// CREATING THE SECOND TRAJECTORY SEQUENCE. TO BE FOLLOWED (ALONG WITH THE FIRST)
         ////// NO MATTER THE SCAN/VISION DATA (IT DOES THIS TRAJECTORY IN ALL CASES)
-            TrajectorySequence trajSeq2 = returnSecondTraj(drive, trajSeq.end());
+        TrajectorySequence trajSeq2 = returnSecondTraj(drive, trajSeq.end());
 
 
         ////// CREATING TWO Pose2d OBJECTS CALLED. THE FIRST, end, IS THE END POSITION OF THE
         ////// SECOND TRAJECTORY SEQUENCE, THE ONE THAT STRAFES LEFT AFTER DOING THE FIRST SCAN.
         ////// THIS IS USED FOR NAVIGATING TO THE PIXEL DROP LOCATION. THE SECOND Pose2d OBJECT,
         ////// CALLED end2, IS THE END POSITION OF THE MOVEMENT NAVIGATING TO THE PIXEL.
-            Pose2d end = trajSeq2.end();
-            Pose2d end2;
+        Pose2d end = trajSeq2.end();
+        Pose2d end2;
 
 
 
-            ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
+        ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
 
 
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
-            TrajectorySequence trajSeq3Left = returnTrajLeft(drive, end, 1);
+        TrajectorySequence trajSeq3Left = returnTrajLeft(drive, end, 1);
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-            end2 = trajSeq3Left.end();
+        end2 = trajSeq3Left.end();
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE LEFT SIDE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-            TrajectorySequence trajSeq3Left2 = returnTrajLeft(drive, end2, 2);
+        TrajectorySequence trajSeq3Left2 = returnTrajLeft(drive, end2, 2);
 
 
         ///////////////////////////////////////////////// MIDDLE ///////////////////////////////////////////////////////
 
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL IN THE MIDDLE.
-            TrajectorySequence trajSeq3Middle = returnTrajMiddle(drive, end, 1);
+        TrajectorySequence trajSeq3Middle = returnTrajMiddle(drive, end, 1);
        /* TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(trajSeq3Middle.end())
                 .turn(Math.toRadians(90))
                 .build();
@@ -98,91 +98,91 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         */
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-            end2 = trajSeq3Middle.end();
+        end2 = trajSeq3Middle.end();
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL IN THE MIDDLE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-            TrajectorySequence trajSeq3Middle3 = returnTrajMiddle(drive, end2, 2);
+        TrajectorySequence trajSeq3Middle3 = returnTrajMiddle(drive, end2, 2);
 
 
         ///////////////////////////////////////////////// RIGHT ///////////////////////////////////////////////////////
 
 
-        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
-            TrajectorySequence trajSeq3Right = returnTrajRight(drive, end, 1);
+        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE RIGHT SIDE.
+        TrajectorySequence trajSeq3Right = returnTrajRight(drive, end, 1);
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-            end2 = trajSeq3Right.end();
+        end2 = trajSeq3Right.end();
 
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE RIGHT SIDE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-            TrajectorySequence trajSeq3Right2 = returnTrajRight(drive, end2, 2);
+        TrajectorySequence trajSeq3Right2 = returnTrajRight(drive, end2, 2);
 
 
-            /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
+        /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
 
-            // PROGRAM STARTS
-            waitForStart();
-            telemetry.update();
+        // PROGRAM STARTS
+        waitForStart();
+        telemetry.update();
 
 
-            ///// Starting the program
-            if (!isStopRequested()) {
-                if (!turnTest) {
+        ///// Starting the program
+        if (!isStopRequested()) {
+            if (!turnTest) {
 
-                    // First traj sequence
-                    drive.followTrajectorySequence(trajSeq);
+                // First traj sequence
+                drive.followTrajectorySequence(trajSeq);
 
-                    // Scanning first time
-                    processDetections.setPhase(1);
+                // Scanning first time
+                processDetections.setPhase(1);
+                pos = processDetections.getPos(true);
+
+                // Second traj sequence
+                drive.followTrajectorySequence(trajSeq2);
+
+                // Scanning second time if needed
+                if (pos == ProcessDetections.pos.notFound) {
+                    processDetections.setPhase(2);
                     pos = processDetections.getPos(true);
-
-                    // Second traj sequence
-                    drive.followTrajectorySequence(trajSeq2);
-
-                    // Scanning second time if needed
-                    if (pos == ProcessDetections.pos.notFound) {
-                        processDetections.setPhase(2);
-                        pos = processDetections.getPos(true);
-                    }
-
-                    Pose2d endPlacePos = new Pose2d();
-
-                    if (pos == ProcessDetections.pos.left) {
-                        drive.followTrajectorySequence(trajSeq3Left);
-                        drop(dt);
-                        drive.followTrajectorySequence(trajSeq3Left2);
-                        endPlacePos = trajSeq3Left.end();
-                    }
-                    if (pos == ProcessDetections.pos.middle) {
-                        drive.followTrajectorySequence(trajSeq3Middle);
-                        //drive.followTrajectorySequence(trajSeq3Middle2);
-                        drop(dt);
-                        drive.followTrajectorySequence(trajSeq3Middle3);
-                        endPlacePos = trajSeq3Middle.end();
-                    }
-                    if (pos == ProcessDetections.pos.right) {
-                        drive.followTrajectorySequence(trajSeq3Right);
-                        drop(dt);
-                        drive.followTrajectorySequence(trajSeq3Right2);
-                        endPlacePos = trajSeq3Right2.end();
-                    }
-
-
-                    ///////
-
-                    TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
-                            .forward(2)
-                            //.turn(Math.toRadians(0))
-                            .lineToLinearHeading(new Pose2d(60, -70, Math.toRadians(0)))
-                            .build();
-                    drive.followTrajectorySequence(trajSeq4Right);
-                    //drive.followTrajectorySequence(trajSeq3);
                 }
-                else
-                {
-                    drive.followTrajectorySequence(trajSeqTurnTest);
+
+                Pose2d endPlacePos = new Pose2d();
+
+                if (pos == ProcessDetections.pos.left) {
+                    drive.followTrajectorySequence(trajSeq3Left);
+                    drop(dt);
+                    drive.followTrajectorySequence(trajSeq3Left2);
+                    endPlacePos = trajSeq3Left.end();
+                }
+                if (pos == ProcessDetections.pos.middle) {
+                    drive.followTrajectorySequence(trajSeq3Middle);
+                    //drive.followTrajectorySequence(trajSeq3Middle2);
+                    drop(dt);
+                    drive.followTrajectorySequence(trajSeq3Middle3);
+                    endPlacePos = trajSeq3Middle.end();
+                }
+                if (pos == ProcessDetections.pos.right) {
+                    drive.followTrajectorySequence(trajSeq3Right);
+                    drop(dt);
+                    drive.followTrajectorySequence(trajSeq3Right2);
+                    endPlacePos = trajSeq3Right2.end();
+                }
+
+
+                ///////
+
+                TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
+                        .forward(2)
+                        //.turn(Math.toRadians(0))
+                        .lineToLinearHeading(new Pose2d(60, -70, Math.toRadians(0)))
+                        .build();
+                //drive.followTrajectorySequence(trajSeq4Right);
+                //drive.followTrajectorySequence(trajSeq3);
+            }
+            else
+            {
+                drive.followTrajectorySequence(trajSeqTurnTest);
             }
         }
 

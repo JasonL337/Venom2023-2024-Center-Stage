@@ -271,7 +271,7 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
                     //.forward(16)
                     //.turn(Math.toRadians(90))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 29, Math.toRadians(0)))
-                    .back(5)
+                    .back(6.5)
                     .build();
             return trajSeq3Right; // test for 1/2
         }
