@@ -244,7 +244,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
                     //.turn(Math.toRadians(180))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 15, Math.toRadians(90)))
                     .turn(Math.toRadians(180))
-                    .back(3)
+                    .back(4)
                     .build();
             return trajSeq3Middle;
         }
