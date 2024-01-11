@@ -218,14 +218,14 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 28, Math.toRadians(0)))
-                    .back(8.5)
+                    .back(11)
                     .build();
             return trajSeq3Left;
         }
         else
         {
             TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(end)
-                    .forward(6)
+                    .forward(8)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 28, Math.toRadians(0)))

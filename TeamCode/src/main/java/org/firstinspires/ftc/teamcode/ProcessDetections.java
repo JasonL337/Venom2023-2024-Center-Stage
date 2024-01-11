@@ -50,11 +50,11 @@ public class ProcessDetections {
         double highestCupConf = 0.3;
         double highestConfidence = 0.2;
         for (Recognition curRecog : allDetections) {
-            if (curRecog.getConfidence() > highestConfidence && curRecog.getLabel().equals("parking meter")) {
+            if (curRecog.getConfidence() > highestConfidence && curRecog.getLabel().equals("parking meter") && curRecog.getWidth() > 170) {
                 correctRecog = curRecog;
                 highestConfidence = curRecog.getConfidence();
             }
-            else if (curRecog.getConfidence() > highestCupConf && (curRecog.getLabel().equals("cup") || curRecog.getLabel().equals("sports ball") || curRecog.getLabel().equals("bench")) && curRecog.getWidth() > 180)
+            else if (curRecog.getConfidence() > highestCupConf && (curRecog.getLabel().equals("cup") || curRecog.getLabel().equals("sports ball") || curRecog.getLabel().equals("bench")) && curRecog.getWidth() > 170)
             {
                 correctCupRecog = curRecog;
                 highestCupConf = curRecog.getConfidence();
