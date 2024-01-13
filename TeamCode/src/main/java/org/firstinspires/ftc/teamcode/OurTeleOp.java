@@ -302,8 +302,8 @@ public class OurTeleOp extends OpMode {
                 boxR.setPosition(1);
             }
             else if (rightBump){
-                boxL.setPosition(0.6);
-                boxR.setPosition(0.6);
+                boxL.setPosition(0.0);
+                boxR.setPosition(0.0);
             }
         }
 
