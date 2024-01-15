@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "AML 1 Auto Blue Right", group = "AML 1 Code`")
+@Autonomous(name = "AML 1 Auto Blue Far", group = "AML 1 Code`")
 @Config
 public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
@@ -108,7 +108,7 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
         ///////////////////////////////////////////////// RIGHT ///////////////////////////////////////////////////////
 
 
-        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE RIGHT SIDE.
+        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
         TrajectorySequence trajSeq3Right = returnTrajRight(drive, end, 1);
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
@@ -204,7 +204,7 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
     public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive, Pose2d end)
     {
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(end)
-                .strafeLeft(10)
+                .strafeLeft(13)
                 .waitSeconds(1)
                 .build();
         return  trajSeq2;
@@ -217,18 +217,18 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
             TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 28, Math.toRadians(0)))
-                    .back(11)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 26, Math.toRadians(0)))
+                    .back(7)
                     .build();
             return trajSeq3Left;
         }
         else
         {
             TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(end)
-                    .forward(8)
+                    .forward(6)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 28, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 26, Math.toRadians(0)))
                     //.back(3)
                     .build();
             return trajSeq3Left2;
@@ -244,14 +244,14 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
                     //.turn(Math.toRadians(180))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 15, Math.toRadians(90)))
                     .turn(Math.toRadians(180))
-                    .back(2)
+                    .back(4)
                     .build();
             return trajSeq3Middle;
         }
         else
         {
             TrajectorySequence trajSeq3Middle3 = drive.trajectorySequenceBuilder(end)
-                    .forward(5)
+                    .forward(6)
                     //.turn(Math.toRadians(90))
                     //.turn(Math.toRadians(90))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 15, Math.toRadians(0)))
@@ -269,7 +269,7 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
                     //.forward(16)
                     //.turn(Math.toRadians(90))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 29, Math.toRadians(180)))
-                    .back(5)
+                    .back(6)
                     .build();
             return trajSeq3Right;
         }

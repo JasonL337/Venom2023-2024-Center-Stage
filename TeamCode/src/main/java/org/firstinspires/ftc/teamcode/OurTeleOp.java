@@ -111,8 +111,8 @@ public class OurTeleOp extends OpMode {
         hangR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        boxL.setPosition(0.6);
-        boxR.setPosition(-0.6);
+        //boxL.setPosition(0.6);
+        //boxR.setPosition(-0.6);
 
 
     }
@@ -298,19 +298,19 @@ public class OurTeleOp extends OpMode {
             boolean leftBump = gamepad2.left_bumper;
             boolean rightBump = gamepad2.right_bumper;
             if (leftBump) {
-                boxL.setPosition(1);
-                boxR.setPosition(1);
+                boxL.setPosition(.9);
+                //boxR.setPosition(1);
             }
             else if (rightBump){
-                boxL.setPosition(0.0);
-                boxR.setPosition(0.0);
+                boxL.setPosition(0.2);
+                //boxR.setPosition(0.0);
             }
         }
 
         public void changeBoxPos()
         {
             boolean topDpadButton = gamepad2.dpad_up;
-            boolean Y_button = gamepad2.dpad_down;
+            boolean dPadDown = gamepad2.dpad_down;
 
             if (topDpadButton && dpadUp.milliseconds() > 500) {
                 if (isBoxOpen) {
@@ -329,7 +329,7 @@ public class OurTeleOp extends OpMode {
                 //boxInTake.setPosition(0);
             }
 
-            if (Y_button) {
+            if (dPadDown) {
                 boxOutTake.setPosition(0);
             } else {
                 boxOutTake.setPosition(1);
@@ -371,14 +371,14 @@ public class OurTeleOp extends OpMode {
             boolean B_button = gamepad2.b;
             if (B_button) {
                 inTake.setPower(-1);
-                // processing.setPower(1);
-            } else if (gamepad2.right_trigger > .2) {
+                processing.setPower(1);
+            } else if (gamepad2.dpad_left) {
                 inTake.setPower(1);
-                //processing.setPower(-1);
+                processing.setPower(-1);
             }
             else {
                 inTake.setPower(0);
-                //processing.setPower(0);
+                processing.setPower(0);
             }
         } //hi jason i love u
 

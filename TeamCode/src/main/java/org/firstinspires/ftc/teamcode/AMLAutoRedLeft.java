@@ -245,7 +245,7 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
                     //.turn(Math.toRadians(180))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 12, Math.toRadians(270)))
                     .turn(Math.toRadians(180))
-                    .back(1)
+                    .back(3)
 
                     .build();
             return trajSeq3Middle;
