@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "AML 1 Auto", group = "AML 1 Code`")
+@Autonomous(name = "Red Auto Close Side", group = "Comp Autos")
 @Config
 public class AMLauto extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
@@ -251,7 +251,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         else
         {
             TrajectorySequence trajSeq3Middle3 = drive.trajectorySequenceBuilder(end)
-                    .forward(6)
+                    .forward(5)
                     //.turn(Math.toRadians(90))
                     //.turn(Math.toRadians(90))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 15, Math.toRadians(0)))

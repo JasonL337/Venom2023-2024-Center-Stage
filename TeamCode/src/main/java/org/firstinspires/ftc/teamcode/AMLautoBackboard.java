@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "AML 1 Auto Backboard", group = "AML 1 Code`")
+@Autonomous(name = "Red Auto Close Side Backboard", group = "Comp Autos")
 @Config
 public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
@@ -68,9 +68,6 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
             Pose2d end = trajSeq2.end();
             Pose2d end2;
 
-        ////// CREATING ANOTHER POSE 2D WHICH IS CALLED end3, THIS IS THE END OF THE MOVING TO BACKBOARD TRJAECTORY SEQUENCE
-            Pose2d end3 = backboard(drive, end).end();
-            //Pose2d end3;
 
 
             ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
@@ -86,6 +83,9 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE LEFT SIDE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
             TrajectorySequence trajSeq3Left2 = returnTrajLeft(drive, end2, 2);
+            Pose2d end3;
+            end3 = trajSeq3Left2.end();
+            TrajectorySequence backBoardSetupLeft = moveToBackBoardLeft(drive, end3);
 
 
         ///////////////////////////////////////////////// MIDDLE ///////////////////////////////////////////////////////
@@ -105,7 +105,8 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL IN THE MIDDLE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
             TrajectorySequence trajSeq3Middle3 = returnTrajMiddle(drive, end2, 2);
-
+            end3 = trajSeq3Middle3.end();
+            TrajectorySequence backBoardSetupMiddle = moveToBackBoardMiddle(drive, end3);
 
         ///////////////////////////////////////////////// RIGHT ///////////////////////////////////////////////////////
 
@@ -120,9 +121,8 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE RIGHT SIDE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
             TrajectorySequence trajSeq3Right2 = returnTrajRight(drive, end2, 2);
-
-        ///////////////////////////////////////////////// MOVE TO BACKBOARD ///////////////////////////////////////////////////////
-            TrajectorySequence movetobackboard = backboard(drive, end3);
+            end3 = trajSeq3Right2.end();
+            TrajectorySequence backBoardSetupRight = moveToBackBoardRight(drive, end3);
 
 
             /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
@@ -158,6 +158,7 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                         drive.followTrajectorySequence(trajSeq3Left);
                         drop(dt);
                         drive.followTrajectorySequence(trajSeq3Left2);
+                        drive.followTrajectorySequence(backBoardSetupLeft);
                         endPlacePos = trajSeq3Left.end();
                     }
                     if (pos == ProcessDetections.pos.middle) {
@@ -165,12 +166,14 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                         //drive.followTrajectorySequence(trajSeq3Middle2);
                         drop(dt);
                         drive.followTrajectorySequence(trajSeq3Middle3);
+                        drive.followTrajectorySequence(backBoardSetupMiddle);
                         endPlacePos = trajSeq3Middle.end();
                     }
                     if (pos == ProcessDetections.pos.right) {
                         drive.followTrajectorySequence(trajSeq3Right);
                         drop(dt);
                         drive.followTrajectorySequence(trajSeq3Right2);
+                        drive.followTrajectorySequence(backBoardSetupRight);
                         endPlacePos = trajSeq3Right2.end();
                     }
 
@@ -180,12 +183,10 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                     TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
                             .forward(2)
                             //.turn(Math.toRadians(0))
-                            .lineToLinearHeading(new Pose2d(60, -62, Math.toRadians(0)))
+                            .lineToLinearHeading(new Pose2d(60, -70, Math.toRadians(0)))
                             .build();
                     drive.followTrajectorySequence(trajSeq4Right);
                     //drive.followTrajectorySequence(trajSeq3);
-
-
                 }
                 else
                 {
@@ -211,8 +212,7 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
     public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive, Pose2d end)
     {
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(end)
-                .strafeLeft(10)
-                .forward(5)
+                .strafeLeft(13)
                 .waitSeconds(1)
                 .build();
         return  trajSeq2;
@@ -225,22 +225,30 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
             TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 22, Math.toRadians(0)))
-                    .back(9)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 26, Math.toRadians(0)))
+                    .back(7)
                     .build();
             return trajSeq3Left;
         }
         else
         {
             TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(end)
-                    .forward(6)
+                    .forward(12)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 22, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(30, -40, Math.toRadians(0)))
                     //.back(3)
                     .build();
             return trajSeq3Left2;
         }
+    }
+
+    public TrajectorySequence moveToBackBoardLeft(SampleMecanumDrive drive, Pose2d end)
+    {
+        TrajectorySequence backBoardSetupLeft = drive.trajectorySequenceBuilder(end)
+                .lineToLinearHeading(new Pose2d(30, -16, Math.toRadians(0)))
+                .build();
+        return backBoardSetupLeft;
     }
 
     public TrajectorySequence returnTrajMiddle(SampleMecanumDrive drive, Pose2d end, int step)
@@ -252,7 +260,7 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                     //.turn(Math.toRadians(180))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 15, Math.toRadians(90)))
                     .turn(Math.toRadians(180))
-                    .back(1)
+                    .back(4)
                     .build();
             return trajSeq3Middle;
         }
@@ -262,19 +270,18 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                     .forward(5)
                     //.turn(Math.toRadians(90))
                     //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 15, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(30, -40, Math.toRadians(0)))
                     //.back(3)
                     .build();
             return trajSeq3Middle3;
         }
     }
-
-    public TrajectorySequence backboard(SampleMecanumDrive drive, Pose2d end3) {
-        TrajectorySequence movetobackboard = drive.trajectorySequenceBuilder(end3)
-                .lineToLinearHeading(new Pose2d(end3.getX() + 11, end3.getY(), Math.toRadians(0)))
-                .forward(7)
+    public TrajectorySequence moveToBackBoardMiddle(SampleMecanumDrive drive, Pose2d end)
+    {
+        TrajectorySequence backBoardSetupMiddle = drive.trajectorySequenceBuilder(end)
+                .lineToLinearHeading(new Pose2d(30, -16, Math.toRadians(0)))
                 .build();
-        return movetobackboard;
+        return backBoardSetupMiddle;
     }
 
     public TrajectorySequence returnTrajRight(SampleMecanumDrive drive, Pose2d end, int step)
@@ -284,21 +291,36 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
             TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(end)
                     //.forward(16)
                     //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 22, Math.toRadians(180)))
-                    .back(4)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 29, Math.toRadians(180)))
+                    .back(6)
                     .build();
             return trajSeq3Right;
         }
         else
         {
+
             TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
+                    .forward(4)
+                    .strafeLeft(15)
+                    .lineToLinearHeading(new Pose2d(30, -40, Math.toRadians(0)))
+                    .build();
+            return trajSeq3Right2;
+
+            /*TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
                     .forward(4)
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 22, Math.toRadians(0)))
                     //.strafeLeft(13)
                     //.turn(Math.toRadians(180))
                     .build();
-            return trajSeq3Right2;
+            return trajSeq3Right2;*/
         }
+    }
+    public TrajectorySequence moveToBackBoardRight(SampleMecanumDrive drive, Pose2d end)
+    {
+        TrajectorySequence backBoardSetupRight = drive.trajectorySequenceBuilder(end)
+                .lineToLinearHeading(new Pose2d(30, -16, Math.toRadians(0)))
+                .build();
+        return backBoardSetupRight;
     }
 
     public void drop(DriveTrain dt)

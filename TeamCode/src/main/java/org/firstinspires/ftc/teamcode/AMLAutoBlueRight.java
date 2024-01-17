@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "AML 1 Auto Blue Far", group = "AML 1 Code`")
+@Autonomous(name = "Blue Auto Far Side", group = "Comp Autos")
 @Config
 public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
