@@ -4,20 +4,24 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
-
 @Autonomous(name = "Red Auto Close Side Backboard", group = "Comp Autos")
 @Config
-public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, TensorflowProp{
+public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
     ProcessDetections processDetections;
     ProcessDetections.pos pos;
+    DistanceSensor distanceSensor; // We define our distance sensor
 
     public static int angle = 0;
     public static boolean turnTest = false;
+    public double distance = 0;
+
 
 
     public int in2rev(double inches){
@@ -35,6 +39,9 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
         initProcessDetections();
         processDetections.detectTFImages.setProcessor(true);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        // Hardware mapping our distance sensor
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "Distance Sensor");
 
 
         ////// DECLARING START POS FOR ROBOT
@@ -159,6 +166,16 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                         drop(dt);
                         drive.followTrajectorySequence(trajSeq3Left2);
                         drive.followTrajectorySequence(backBoardSetupLeft);
+                        currDist(); // sees how far we are from the backboard in inches
+                        while (distance > 1) // we go forward until we are an inch away from the backboard
+                        {
+                            // we move forward at a moderate pace
+                            dt.frontR.setPower(0.5);
+                            dt.frontL.setPower(0.5);
+                            dt.backR.setPower(0.5);
+                            dt.backL.setPower(0.5);
+                            currDist(); // we keep on checking our distance to see if we have gotten closer
+                        }
                         endPlacePos = trajSeq3Left.end();
                     }
                     if (pos == ProcessDetections.pos.middle) {
@@ -167,6 +184,15 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                         drop(dt);
                         drive.followTrajectorySequence(trajSeq3Middle3);
                         drive.followTrajectorySequence(backBoardSetupMiddle);
+                        currDist();
+                        while (distance > 1)
+                        {
+                            dt.frontR.setPower(0.5);
+                            dt.frontL.setPower(-0.5);
+                            dt.backR.setPower(0.5);
+                            dt.backL.setPower(-0.5);
+                            currDist();
+                        }
                         endPlacePos = trajSeq3Middle.end();
                     }
                     if (pos == ProcessDetections.pos.right) {
@@ -174,19 +200,28 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                         drop(dt);
                         drive.followTrajectorySequence(trajSeq3Right2);
                         drive.followTrajectorySequence(backBoardSetupRight);
+                        currDist();
+                        while (distance > 1)
+                        {
+                            dt.frontR.setPower(0.5);
+                            dt.frontL.setPower(0.5);
+                            dt.backR.setPower(0.5);
+                            dt.backL.setPower(0.5);
+                            currDist();
+                        }
                         endPlacePos = trajSeq3Right2.end();
                     }
 
 
                     ///////
 
-                    TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
+                    /*TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
                             .forward(2)
                             //.turn(Math.toRadians(0))
                             .lineToLinearHeading(new Pose2d(60, -70, Math.toRadians(0)))
                             .build();
                     drive.followTrajectorySequence(trajSeq4Right);
-                    //drive.followTrajectorySequence(trajSeq3);
+                    //drive.followTrajectorySequence(trajSeq3);*/
                 }
                 else
                 {
@@ -283,7 +318,6 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                 .build();
         return backBoardSetupMiddle;
     }
-
     public TrajectorySequence returnTrajRight(SampleMecanumDrive drive, Pose2d end, int step)
     {
         if (step == 1)
@@ -322,7 +356,10 @@ public class AMLautoBackboard extends LinearOpMode implements VisionPortalUser, 
                 .build();
         return backBoardSetupRight;
     }
-
+    public void currDist()
+    {
+        distance = distanceSensor.getDistance(DistanceUnit.INCH);
+    }
     public void drop(DriveTrain dt)
     {
         ElapsedTime outputTime = new ElapsedTime();

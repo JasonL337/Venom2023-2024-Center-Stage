@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,7 +11,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySe
 
 @Autonomous(name = "Red Auto Close Side", group = "Comp Autos")
 @Config
-public class AMLauto extends LinearOpMode implements VisionPortalUser, TensorflowProp{
+public class AMLAuto extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
     ProcessDetections processDetections;
     ProcessDetections.pos pos;

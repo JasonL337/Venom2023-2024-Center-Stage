@@ -298,11 +298,11 @@ public class OurTeleOp extends OpMode {
             boolean leftBump = gamepad2.left_bumper;
             boolean rightBump = gamepad2.right_bumper;
             if (leftBump) {
-                boxL.setPosition(.9);
+                boxL.setPosition(0.9);
                 //boxR.setPosition(1);
             }
             else if (rightBump){
-                boxL.setPosition(0.2);
+                boxL.setPosition(0.4);
                 //boxR.setPosition(0.0);
             }
         }
