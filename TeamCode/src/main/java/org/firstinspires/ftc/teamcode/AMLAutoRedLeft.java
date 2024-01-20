@@ -9,21 +9,51 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
+
+import java.util.TreeMap;
+
 //luke was here
 @Autonomous(name = "Red Auto Far Side", group = "Comp Autos")
 @Config
-public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, TensorflowProp{
+public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, TensorflowProp, UsesTrajectories{
     Camera camera;
     ProcessDetections processDetections;
     ProcessDetections.pos pos;
 
     public static int angle = 0;
     public static boolean turnTest = false;
-//slay
+
+    public Pose2d curPose;
+
+    public Pose2d startPose;
+
+    public TreeMap<trajNames, TrajectorySequence> trajs;
+
 
     public int in2rev(double inches){
         return (int) Math.round((inches/(4 * Math.PI) * 537.7));
 
+    }
+
+    @Override
+    public void initTrajMap()
+    {
+        trajs = new TreeMap<>();
+    }
+
+    public enum trajNames
+    {
+        turnTest,
+        traj1,
+        traj2,
+        trajLeft1,
+        trajLeft2,
+        trajMiddle1,
+        trajMiddle2,
+        trajRight1,
+        trajRight2,
+        fromPixel,
+        toBackBoard,
     }
 
     @Override
@@ -34,18 +64,18 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
         DriveTrain dt = new DriveTrain(this);
         initVisionPortal();
         initProcessDetections();
+        initTrajMap();
         processDetections.detectTFImages.setProcessor(true);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
 
         ////// DECLARING START POS FOR ROBOT
-        Pose2d startPose = new Pose2d(12, 61, Math.toRadians(270));
+        startPose = new Pose2d(12, 61, Math.toRadians(270));
+        switchCurPose(startPose);
 
 
         ////// CREATING THE TURN TEST TRAJECTORY SEQUENCE
-        TrajectorySequence trajSeqTurnTest = drive.trajectorySequenceBuilder(startPose)
-                .turn(Math.toRadians(angle))
-                .build();
+        returnTajTurnTest(drive);
 
 
         ////// INITIALIZING THE STARTING POSITION OF THE AUTO PATHING USING startPose
@@ -54,43 +84,42 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
 
         ////// CREATING THE FIRST TRAJECTORY SEQUENCE. THIS MAINTAINS THE SAME HEADING AS IT
         ////// MOVES DIAGONALLY TO OUR FIRST SCAN AREA ON THE RIGHT POSITION.
-        TrajectorySequence trajSeq = returnFirstTraj(drive, startPose);
+        returnFirstTraj(drive);
 
 
         ////// CREATING THE SECOND TRAJECTORY SEQUENCE. TO BE FOLLOWED (ALONG WITH THE FIRST)
         ////// NO MATTER THE SCAN/VISION DATA (IT DOES THIS TRAJECTORY IN ALL CASES)
-        TrajectorySequence trajSeq2 = returnSecondTraj(drive, trajSeq.end());
+        returnSecondTraj(drive);
 
 
         ////// CREATING TWO Pose2d OBJECTS CALLED. THE FIRST, end, IS THE END POSITION OF THE
         ////// SECOND TRAJECTORY SEQUENCE, THE ONE THAT STRAFES LEFT AFTER DOING THE FIRST SCAN.
         ////// THIS IS USED FOR NAVIGATING TO THE PIXEL DROP LOCATION. THE SECOND Pose2d OBJECT,
         ////// CALLED end2, IS THE END POSITION OF THE MOVEMENT NAVIGATING TO THE PIXEL.
-        Pose2d end = trajSeq2.end();
-        Pose2d end2;
+        Pose2d endOfScans = trajs.get(trajNames.traj2).end();
 
 
 
         ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
 
-
+        switchCurPose(endOfScans);
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
-        TrajectorySequence trajSeq3Left = returnTrajLeft(drive, end, 1);
+        returnTrajLeft(drive, 1);
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-        end2 = trajSeq3Left.end();
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE LEFT SIDE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-        TrajectorySequence trajSeq3Left2 = returnTrajLeft(drive, end2, 2);
+        returnTrajLeft(drive, 2);
 
 
         ///////////////////////////////////////////////// MIDDLE ///////////////////////////////////////////////////////
 
 
+        switchCurPose(endOfScans);
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL IN THE MIDDLE.
-        TrajectorySequence trajSeq3Middle = returnTrajMiddle(drive, end, 1);
+        returnTrajMiddle(drive, 1);
        /* TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(trajSeq3Middle.end())
                 .turn(Math.toRadians(90))
                 .build();
@@ -98,26 +127,25 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
         */
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-        end2 = trajSeq3Middle.end();
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL IN THE MIDDLE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-        TrajectorySequence trajSeq3Middle3 = returnTrajMiddle(drive, end2, 2);
+        returnTrajMiddle(drive, 2);
 
 
         ///////////////////////////////////////////////// RIGHT ///////////////////////////////////////////////////////
 
+        switchCurPose(endOfScans);
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
-        TrajectorySequence trajSeq3Right = returnTrajRight(drive, end, 1);
+        returnTrajRight(drive, 1);
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-        end2 = trajSeq3Right.end();
 
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE RIGHT SIDE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-        TrajectorySequence trajSeq3Right2 = returnTrajRight(drive, end2, 2);
+        returnTrajRight(drive, 2);
 
 
         /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
@@ -132,14 +160,14 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
             if (!turnTest) {
 
                 // First traj sequence
-                drive.followTrajectorySequence(trajSeq);
+                drive.followTrajectorySequence(trajs.get(trajNames.traj1));
 
                 // Scanning first time
                 processDetections.setPhase(1);
                 pos = processDetections.getPos(false);
 
                 // Second traj sequence
-                drive.followTrajectorySequence(trajSeq2);
+                drive.followTrajectorySequence(trajs.get(trajNames.traj2));
 
                 // Scanning second time if needed
                 if (pos == ProcessDetections.pos.notFound) {
@@ -150,29 +178,31 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
                 Pose2d endPlacePos = new Pose2d();
 
                 if (pos == ProcessDetections.pos.left) {
-                    drive.followTrajectorySequence(trajSeq3Left);
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajLeft1));
                     drop(dt);
-                    drive.followTrajectorySequence(trajSeq3Left2);
-                    endPlacePos = trajSeq3Left.end();
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajLeft2));
+                    endPlacePos = trajs.get(trajNames.trajLeft2).end();
                 }
                 if (pos == ProcessDetections.pos.middle) {
-                    drive.followTrajectorySequence(trajSeq3Middle);
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajMiddle1));
                     //drive.followTrajectorySequence(trajSeq3Middle2);
                     drop(dt);
-                    drive.followTrajectorySequence(trajSeq3Middle3);
-                    endPlacePos = trajSeq3Middle.end();
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajMiddle2));
+                    endPlacePos = trajs.get(trajNames.trajMiddle2).end();
                 }
                 if (pos == ProcessDetections.pos.right) {
-                    drive.followTrajectorySequence(trajSeq3Right);
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajRight1));
                     drop(dt);
-                    drive.followTrajectorySequence(trajSeq3Right2);
-                    endPlacePos = trajSeq3Right2.end();
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajRight2));
+                    endPlacePos = trajs.get(trajNames.trajRight2).end();
                 }
+
+                switchCurPose(endPlacePos);
 
 
                 ///////
 
-                TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
+                TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(curPose)
                         .forward(2)
                         //.turn(Math.toRadians(0))
                         .lineToLinearHeading(new Pose2d(70, 65 , Math.toRadians(0)))
@@ -182,7 +212,7 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
             }
             else
             {
-                drive.followTrajectorySequence(trajSeqTurnTest);
+                drive.followTrajectorySequence(trajs.get(trajNames.turnTest));
             }
         }
 
@@ -190,98 +220,131 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
 
     }
 
-    public TrajectorySequence returnFirstTraj(SampleMecanumDrive drive, Pose2d end)
+    @Override
+    public Pose2d switchCurPose(Pose2d newPose)
     {
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(end)
+        Pose2d tempPose = curPose;
+        curPose = newPose;
+        return tempPose;
+    }
+
+    public TrajectorySequence returnTajTurnTest(SampleMecanumDrive drive)
+    {
+        TrajectorySequence trajSeqTurnTest = drive.trajectorySequenceBuilder(startPose)
+                .turn(Math.toRadians(angle))
+                .build();
+        trajs.put(trajNames.turnTest, trajSeqTurnTest);
+        return trajSeqTurnTest;
+    }
+
+    public TrajectorySequence returnFirstTraj(SampleMecanumDrive drive)
+    {
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(curPose)
                 //.forward(4)
                 //.strafeRight(11)
-                .lineToLinearHeading(new Pose2d(end.getX() + 11, end.getY() - 8, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(curPose.getX() + 11, curPose.getY() - 8, Math.toRadians(270)))
                 .waitSeconds(2)
                 .build();
+        trajs.put(trajNames.traj1, trajSeq);
+        switchCurPose(trajSeq.end());
         return  trajSeq;
     }
 
-    public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive, Pose2d end)
+    public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive)
     {
-        TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(end)
+        TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(curPose)
                 .strafeRight(10)
                 .forward(5)
                 .waitSeconds(1)
                 .build();
+        trajs.put(trajNames.traj2, trajSeq2);
+        switchCurPose(trajSeq2.end());
         return  trajSeq2;
     }
 
-    public TrajectorySequence returnTrajLeft(SampleMecanumDrive drive, Pose2d end, int step)
+    public TrajectorySequence returnTrajLeft(SampleMecanumDrive drive, int step)
     {
         if (step == 1)
         {
-            TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(end)
+            TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(curPose)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 28, Math.toRadians(180)))
-                    .back(7)
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() - 28, Math.toRadians(180)))
+                    .back(6)
                     .build();
+            trajs.put(trajNames.traj1, trajSeq3Left);
+            switchCurPose(trajSeq3Left.end());
             return trajSeq3Left;
         }
         else
         {
-            TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(end)
-                    .forward(6)
+            TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(curPose)
+                    .forward(5)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 28, Math.toRadians(0)))
+                    .strafeRight(6)
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() + 28, Math.toRadians(0)))
                     //.back(3)
                     .build();
+            trajs.put(trajNames.traj1, trajSeq3Left2);
+            switchCurPose(trajSeq3Left2.end());
             return trajSeq3Left2;
         }
     }
 
-    public TrajectorySequence returnTrajMiddle(SampleMecanumDrive drive, Pose2d end, int step)
+    public TrajectorySequence returnTrajMiddle(SampleMecanumDrive drive, int step)
     {
         if (step == 1)
         { // test for git
-            TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(end)
+            TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(curPose)
                     //.forward(16)
                     //.turn(Math.toRadians(180))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 12, Math.toRadians(270)))
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() - 12, Math.toRadians(270)))
                     .turn(Math.toRadians(180))
                     .back(3)
-
                     .build();
+            trajs.put(trajNames.traj1, trajSeq3Middle);
+            switchCurPose(trajSeq3Middle.end());
             return trajSeq3Middle;
         }
         else
         {
-            TrajectorySequence trajSeq3Middle3 = drive.trajectorySequenceBuilder(end)
+            TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(curPose)
                     .forward(5)
                     //.turn(Math.toRadians(90))
                     //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 15, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() + 15, Math.toRadians(0)))
                     //.back(3)
                     .build();
-            return trajSeq3Middle3;
+            trajs.put(trajNames.traj1, trajSeq3Middle2);
+            switchCurPose(trajSeq3Middle2.end());
+            return trajSeq3Middle2;
         }
     }
 
-    public TrajectorySequence returnTrajRight(SampleMecanumDrive drive, Pose2d end, int step)
+    public TrajectorySequence returnTrajRight(SampleMecanumDrive drive, int step)
     {
         if (step == 1)
         {
-            TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(end)
+            TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(curPose)
                     //.forward(16)
                     //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 29, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() - 29, Math.toRadians(0)))
                     .back(6.5)
                     .build();
+            trajs.put(trajNames.traj1, trajSeq3Right);
+            switchCurPose(trajSeq3Right.end());
             return trajSeq3Right; // test for 1/2
         }
         else
         {
-            TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
+            TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(curPose)
                     .forward(4)
                     .strafeLeft(15)
                     .turn(Math.toRadians(180))
                     .build();
+            trajs.put(trajNames.traj1, trajSeq3Right2);
+            switchCurPose(trajSeq3Right2.end());
             return trajSeq3Right2;
 
             /*TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
@@ -297,7 +360,7 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
     public void drop(DriveTrain dt)
     {
         ElapsedTime outputTime = new ElapsedTime();
-        while (outputTime.milliseconds() < 4000) {
+        while (outputTime.milliseconds() < 2000) {
             dt.liftarms();
         }
     }
