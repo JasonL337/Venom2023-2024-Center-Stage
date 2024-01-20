@@ -159,6 +159,8 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                 // Second traj sequence
                 drive.followTrajectorySequence(trajSeq2);
 
+                // test#2
+
                 // Scanning second time if needed
                 if (pos == ProcessDetections.pos.notFound) {
                     processDetections.setPhase(2);
