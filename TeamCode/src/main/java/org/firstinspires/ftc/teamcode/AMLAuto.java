@@ -11,7 +11,9 @@ import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySe
 
 @Autonomous(name = "Red Auto Close Side", group = "Comp Autos")
 @Config
-public class AMLAuto extends LinearOpMode implements VisionPortalUser, TensorflowProp{
+public class
+
+AMLAuto extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
     ProcessDetections processDetections;
     ProcessDetections.pos pos;
