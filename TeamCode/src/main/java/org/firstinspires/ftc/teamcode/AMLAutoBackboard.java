@@ -55,54 +55,54 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
 
 
         ////// INITIALIZING THE STARTING POSITION OF THE AUTO PATHING USING startPose
-            drive.setPoseEstimate(startPose);
+        drive.setPoseEstimate(startPose);
 
 
         ////// CREATING THE FIRST TRAJECTORY SEQUENCE. THIS MAINTAINS THE SAME HEADING AS IT
         ////// MOVES DIAGONALLY TO OUR FIRST SCAN AREA ON THE RIGHT POSITION.
-            TrajectorySequence trajSeq = returnFirstTraj(drive, startPose);
+        TrajectorySequence trajSeq = returnFirstTraj(drive, startPose);
 
 
         ////// CREATING THE SECOND TRAJECTORY SEQUENCE. TO BE FOLLOWED (ALONG WITH THE FIRST)
         ////// NO MATTER THE SCAN/VISION DATA (IT DOES THIS TRAJECTORY IN ALL CASES)
-            TrajectorySequence trajSeq2 = returnSecondTraj(drive, trajSeq.end());
+        TrajectorySequence trajSeq2 = returnSecondTraj(drive, trajSeq.end());
 
 
         ////// CREATING TWO Pose2d OBJECTS CALLED. THE FIRST, end, IS THE END POSITION OF THE
         ////// SECOND TRAJECTORY SEQUENCE, THE ONE THAT STRAFES LEFT AFTER DOING THE FIRST SCAN.
         ////// THIS IS USED FOR NAVIGATING TO THE PIXEL DROP LOCATION. THE SECOND Pose2d OBJECT,
         ////// CALLED end2, IS THE END POSITION OF THE MOVEMENT NAVIGATING TO THE PIXEL.
-            Pose2d end = trajSeq2.end();
-            Pose2d end2;
+        Pose2d end = trajSeq2.end();
+        Pose2d end2;
 
 
 
-            ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
+        ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
 
 
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
-            TrajectorySequence trajSeq3Left = returnTrajLeft(drive, end, 1);
+        TrajectorySequence trajSeq3Left = returnTrajLeft(drive, end, 1);
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-            end2 = trajSeq3Left.end();
+        end2 = trajSeq3Left.end();
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE LEFT SIDE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-            TrajectorySequence trajSeq3Left2 = returnTrajLeft(drive, end2, 2);
-            Pose2d end3;
-            end3 = trajSeq3Left2.end();
-            TrajectorySequence backBoardSetupLeft = moveToBackBoardLeft(drive, end3);
-            Pose2d end4;
-            end4 = backBoardSetupLeft.end();
-            TrajectorySequence dropSetupLeft = strafeToDropLeft(drive, end4);
+        TrajectorySequence trajSeq3Left2 = returnTrajLeft(drive, end2, 2);
+        Pose2d end3;
+        end3 = trajSeq3Left2.end();
+        TrajectorySequence backBoardSetupLeft = moveToBackBoardLeft(drive, end3);
+        Pose2d end4;
+        end4 = backBoardSetupLeft.end();
+        TrajectorySequence dropSetupLeft = strafeToDropLeft(drive, end4);
 
 
         ///////////////////////////////////////////////// MIDDLE ///////////////////////////////////////////////////////
 
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL IN THE MIDDLE.
-            TrajectorySequence trajSeq3Middle = returnTrajMiddle(drive, end, 1);
+        TrajectorySequence trajSeq3Middle = returnTrajMiddle(drive, end, 1);
        /* TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(trajSeq3Middle.end())
                 .turn(Math.toRadians(90))
                 .build();
@@ -110,69 +110,69 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
         */
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-            end2 = trajSeq3Middle.end();
+        end2 = trajSeq3Middle.end();
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL IN THE MIDDLE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-            TrajectorySequence trajSeq3Middle3 = returnTrajMiddle(drive, end2, 2);
-            end3 = trajSeq3Middle3.end();
-            TrajectorySequence backBoardSetupMiddle = moveToBackBoardMiddle(drive, end3);
-            end4 = backBoardSetupMiddle.end();
-            TrajectorySequence dropSetupMiddle = strafeToDropMiddle(drive, end4);
+        TrajectorySequence trajSeq3Middle3 = returnTrajMiddle(drive, end2, 2);
+        end3 = trajSeq3Middle3.end();
+        TrajectorySequence backBoardSetupMiddle = moveToBackBoardMiddle(drive, end3);
+        end4 = backBoardSetupMiddle.end();
+        TrajectorySequence dropSetupMiddle = strafeToDropMiddle(drive, end4);
 
         ///////////////////////////////////////////////// RIGHT ///////////////////////////////////////////////////////
 
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
-            TrajectorySequence trajSeq3Right = returnTrajRight(drive, end, 1);
+        TrajectorySequence trajSeq3Right = returnTrajRight(drive, end, 1);
 
         ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-            end2 = trajSeq3Right.end();
+        end2 = trajSeq3Right.end();
 
 
         ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE RIGHT SIDE TOWARDS THE STARING POSITION
         ////// SO THAT WE MAY PARK.
-            TrajectorySequence trajSeq3Right2 = returnTrajRight(drive, end2, 2);
-            end3 = trajSeq3Right2.end();
-            TrajectorySequence backBoardSetupRight = moveToBackBoardRight(drive, end3);
-            end4 = backBoardSetupLeft.end();
-            TrajectorySequence dropSetupRight = strafeToDropRight(drive, end4);
+        TrajectorySequence trajSeq3Right2 = returnTrajRight(drive, end2, 2);
+        end3 = trajSeq3Right2.end();
+        TrajectorySequence backBoardSetupRight = moveToBackBoardRight(drive, end3);
+        end4 = backBoardSetupLeft.end();
+        TrajectorySequence dropSetupRight = strafeToDropRight(drive, end4);
 
-            /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
+        /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
 
-            // PROGRAM STARTS
-            waitForStart();
-            telemetry.update();
+        // PROGRAM STARTS
+        waitForStart();
+        telemetry.update();
 
 
-            ///// Starting the program
-            if (!isStopRequested()) {
-                if (!turnTest) {
+        ///// Starting the program
+        if (!isStopRequested()) {
+            if (!turnTest) {
 
-                    // First traj sequence
-                    drive.followTrajectorySequence(trajSeq);
+                // First traj sequence
+                drive.followTrajectorySequence(trajSeq);
 
-                    // Scanning first time
-                    processDetections.setPhase(1);
+                // Scanning first time
+                processDetections.setPhase(1);
+                pos = processDetections.getPos(true);
+
+                // Second traj sequence
+                drive.followTrajectorySequence(trajSeq2);
+
+                // Scanning second time if needed
+                if (pos == ProcessDetections.pos.notFound) {
+                    processDetections.setPhase(2);
                     pos = processDetections.getPos(true);
+                }
 
-                    // Second traj sequence
-                    drive.followTrajectorySequence(trajSeq2);
+                Pose2d endPlacePos = new Pose2d();
 
-                    // Scanning second time if needed
-                    if (pos == ProcessDetections.pos.notFound) {
-                        processDetections.setPhase(2);
-                        pos = processDetections.getPos(true);
-                    }
-
-                    Pose2d endPlacePos = new Pose2d();
-
-                    if (pos == ProcessDetections.pos.left) {
-                        drive.followTrajectorySequence(trajSeq3Left);
-                        drop(dt);
-                        drive.followTrajectorySequence(trajSeq3Left2);
-                        drive.followTrajectorySequence(backBoardSetupLeft);
-                        //currDist(); // sees how far we are from the backboard in inches
+                if (pos == ProcessDetections.pos.left) {
+                    drive.followTrajectorySequence(trajSeq3Left);
+                    drop(dt);
+                    drive.followTrajectorySequence(trajSeq3Left2);
+                    drive.followTrajectorySequence(backBoardSetupLeft);
+                    //currDist(); // sees how far we are from the backboard in inches
                         /*while (distance > 1) // we go forward until we are an inch away from the backboard
                         {
                             // we move forward at a moderate pace
@@ -182,16 +182,16 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                             dt.backL.setPower(0.5);
                             currDist(); // we keep on checking our distance to see if we have gotten closer
                         }*/
-                        drive.followTrajectorySequence(dropSetupLeft);
-                        endPlacePos = dropSetupLeft.end();
-                    }
-                    if (pos == ProcessDetections.pos.middle) {
-                        drive.followTrajectorySequence(trajSeq3Middle);
-                        //drive.followTrajectorySequence(trajSeq3Middle2);
-                        drop(dt);
-                        drive.followTrajectorySequence(trajSeq3Middle3);
-                        drive.followTrajectorySequence(backBoardSetupMiddle);
-                        //currDist();
+                    drive.followTrajectorySequence(dropSetupLeft);
+                    endPlacePos = dropSetupLeft.end();
+                }
+                if (pos == ProcessDetections.pos.middle) {
+                    drive.followTrajectorySequence(trajSeq3Middle);
+                    //drive.followTrajectorySequence(trajSeq3Middle2);
+                    drop(dt);
+                    drive.followTrajectorySequence(trajSeq3Middle3);
+                    drive.followTrajectorySequence(backBoardSetupMiddle);
+                    //currDist();
                         /*while (distance > 1)
                         {
                             dt.frontR.setPower(0.5);
@@ -200,15 +200,15 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                             dt.backL.setPower(-0.5);
                             currDist();
                         }*/
-                        drive.followTrajectorySequence(dropSetupMiddle);
-                        endPlacePos = dropSetupMiddle.end();
-                    }
-                    if (pos == ProcessDetections.pos.right) {
-                        drive.followTrajectorySequence(trajSeq3Right);
-                        drop(dt);
-                        drive.followTrajectorySequence(trajSeq3Right2);
-                        drive.followTrajectorySequence(backBoardSetupRight);
-                        //currDist();
+                    drive.followTrajectorySequence(dropSetupMiddle);
+                    endPlacePos = dropSetupMiddle.end();
+                }
+                if (pos == ProcessDetections.pos.right) {
+                    drive.followTrajectorySequence(trajSeq3Right);
+                    drop(dt);
+                    drive.followTrajectorySequence(trajSeq3Right2);
+                    drive.followTrajectorySequence(backBoardSetupRight);
+                    //currDist();
                         /*while (distance > 1)
                         {
                             dt.frontR.setPower(0.5);
@@ -217,12 +217,12 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                             dt.backL.setPower(0.5);
                             currDist();
                         }*/
-                        drive.followTrajectorySequence(dropSetupRight);
-                        endPlacePos = dropSetupRight.end();
-                    }
+                    drive.followTrajectorySequence(dropSetupRight);
+                    endPlacePos = dropSetupRight.end();
+                }
 
 
-                    ///////
+                ///////
 
                     /*TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(endPlacePos)
                             .forward(2)
@@ -231,10 +231,10 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                             .build();
                     drive.followTrajectorySequence(trajSeq4Right);
                     //drive.followTrajectorySequence(trajSeq3);*/
-                }
-                else
-                {
-                    drive.followTrajectorySequence(trajSeqTurnTest);
+            }
+            else
+            {
+                drive.followTrajectorySequence(trajSeqTurnTest);
             }
         }
 

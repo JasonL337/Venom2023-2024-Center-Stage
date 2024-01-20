@@ -12,10 +12,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySe
 import java.util.TreeMap;
 @Autonomous(name = "Red Auto Close Side", group = "Comp Autos")
 @Config
-public class
-
-AMLAuto extends LinearOpMode implements VisionPortalUser, TensorflowProp{
-public class AMLauto extends LinearOpMode implements VisionPortalUser, TensorflowProp, UsesTrajectories {
+public class AMLAuto extends LinearOpMode implements VisionPortalUser, TensorflowProp, UsesTrajectories{
 
     Camera camera;
     ProcessDetections processDetections;
@@ -31,17 +28,19 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
     public TreeMap<AMLAutoBlue.trajNames, TrajectorySequence> trajs;
 
 
-    public int in2rev(double inches) {
-        return (int) Math.round((inches / (4 * Math.PI) * 537.7));
+    public int in2rev(double inches){
+        return (int) Math.round((inches/(4 * Math.PI) * 537.7));
 
     }
 
     @Override
-    public void initTrajMap() {
+    public void initTrajMap()
+    {
         trajs = new TreeMap<>();
     }
 
-    public enum trajNames {
+    public enum trajNames
+    {
         turnTest,
         traj1,
         traj2,
@@ -56,7 +55,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
     }
 
     @Override
-    public void runOpMode() {
+    public void runOpMode(){
 
 
         //// INITIALIZATION
@@ -81,6 +80,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         */
 
 
+
         ////// INITIALIZING THE STARTING POSITION OF THE AUTO PATHING USING startPose
         drive.setPoseEstimate(startPose);
 
@@ -100,6 +100,7 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         ////// THIS IS USED FOR NAVIGATING TO THE PIXEL DROP LOCATION. THE SECOND Pose2d OBJECT,
         ////// CALLED end2, IS THE END POSITION OF THE MOVEMENT NAVIGATING TO THE PIXEL.
         Pose2d endOfScans = trajs.get(AMLAutoBlue.trajNames.traj2).end();
+
 
 
         ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
@@ -212,22 +213,27 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
                         .build();
                 drive.followTrajectorySequence(trajSeq4Right);
                 //drive.followTrajectorySequence(trajSeq3);
-            } else {
+            }
+            else
+            {
                 //drive.followTrajectorySequence(trajSeqTurnTest);
             }
         }
 
 
+
     }
 
     @Override
-    public Pose2d switchCurPose(Pose2d newPose) {
+    public Pose2d switchCurPose(Pose2d newPose)
+    {
         Pose2d tempPose = curPose;
         curPose = newPose;
         return tempPose;
     }
 
-    public TrajectorySequence returnFirstTraj(SampleMecanumDrive drive) {
+    public TrajectorySequence returnFirstTraj(SampleMecanumDrive drive)
+    {
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(curPose)
                 //.forward(4)
                 //.strafeRight(11)
@@ -236,21 +242,24 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
                 .build();
         trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq);
         switchCurPose(trajSeq.end());
-        return trajSeq;
+        return  trajSeq;
     }
 
-    public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive) {
+    public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive)
+    {
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(curPose)
                 .strafeLeft(13)
                 .waitSeconds(1)
                 .build();
         trajs.put(AMLAutoBlue.trajNames.traj2, trajSeq2);
         switchCurPose(trajSeq2.end());
-        return trajSeq2;
+        return  trajSeq2;
     }
 
-    public TrajectorySequence returnTrajLeft(SampleMecanumDrive drive, int step) {
-        if (step == 1) {
+    public TrajectorySequence returnTrajLeft(SampleMecanumDrive drive, int step)
+    {
+        if (step == 1)
+        {
             TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(curPose)
                     //.forward(16)
                     //.turn(Math.toRadians(-90))
@@ -260,7 +269,9 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             trajs.put(AMLAutoBlue.trajNames.trajLeft1, trajSeq3Left);
             switchCurPose(trajSeq3Left.end());
             return trajSeq3Left;
-        } else {
+        }
+        else
+        {
             TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(curPose)
                     .forward(6)
                     //.forward(16)
@@ -274,8 +285,10 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         }
     }
 
-    public TrajectorySequence returnTrajMiddle(SampleMecanumDrive drive, int step) {
-        if (step == 1) { // test for git
+    public TrajectorySequence returnTrajMiddle(SampleMecanumDrive drive, int step)
+    {
+        if (step == 1)
+        { // test for git
             TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(curPose)
                     //.forward(16)
                     //.turn(Math.toRadians(180))
@@ -286,7 +299,9 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq3Middle);
             switchCurPose(trajSeq3Middle.end());
             return trajSeq3Middle;
-        } else {
+        }
+        else
+        {
             TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(curPose)
                     .forward(6)
                     //.turn(Math.toRadians(90))
@@ -300,8 +315,10 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         }
     }
 
-    public TrajectorySequence returnTrajRight(SampleMecanumDrive drive, int step) {
-        if (step == 1) {
+    public TrajectorySequence returnTrajRight(SampleMecanumDrive drive, int step)
+    {
+        if (step == 1)
+        {
             TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(curPose)
                     //.forward(16)
                     //.turn(Math.toRadians(90))
@@ -311,7 +328,9 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
             trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq3Right);
             switchCurPose(trajSeq3Right.end());
             return trajSeq3Right;
-        } else {
+        }
+        else
+        {
 
             TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(curPose)
                     .forward(4)
@@ -332,7 +351,8 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
         }
     }
 
-    public void drop(DriveTrain dt) {
+    public void drop(DriveTrain dt)
+    {
         ElapsedTime outputTime = new ElapsedTime();
         while (outputTime.milliseconds() < 4000) {
             dt.liftarms();
@@ -346,13 +366,15 @@ public class AMLauto extends LinearOpMode implements VisionPortalUser, Tensorflo
     }
 
     @Override
-    public void initVisionPortal() {
+    public void initVisionPortal()
+    {
         camera = new Camera();
         camera.initVisionPortal(this);
     }
 
     @Override
-    public Camera getCamera() {
+    public Camera getCamera()
+    {
         return camera;
     }
 
