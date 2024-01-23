@@ -118,6 +118,10 @@ public class DriveTrain {
                 frontL.setPower(power);
                 frontR.setPower(power);
             }
+            backL.setPower(0);
+            backR.setPower(0);
+            frontL.setPower(0);
+            frontR.setPower(0);
         }
 
         public double getTrueAngle(double heading)
