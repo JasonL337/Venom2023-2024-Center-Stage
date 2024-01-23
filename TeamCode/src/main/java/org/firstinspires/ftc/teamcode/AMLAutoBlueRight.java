@@ -25,7 +25,7 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
 
     public Pose2d startPose;
 
-    public TreeMap<AMLAutoBlue.trajNames, TrajectorySequence> trajs;
+    public TreeMap<trajNames, TrajectorySequence> trajs;
 
 
     public int in2rev(double inches){
@@ -39,7 +39,7 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
         trajs = new TreeMap<>();
     }
 
-    public enum trajNames
+    private enum trajNames
     {
         turnTest,
         traj1,
@@ -57,7 +57,6 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
     @Override
     public void runOpMode(){
 
-
         //// INITIALIZATION
         DriveTrain dt = new DriveTrain(this);
         initVisionPortal();
@@ -65,8 +64,217 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
         initTrajMap();
         processDetections.detectTFImages.setProcessor(true);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        buildInitialTrajs(drive);
 
 
+
+        /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
+
+        // PROGRAM STARTS
+        waitForStart();
+        telemetry.update();
+
+
+        ///// Starting the program
+        if (!isStopRequested()) {
+            if (!turnTest) {
+
+                // First traj sequence
+                drive.followTrajectorySequence(trajs.get(trajNames.traj1));
+
+                // Scanning first time
+                processDetections.setPhase(1);
+                pos = processDetections.getPos(true);
+
+                // Second traj sequence
+                drive.followTrajectorySequence(trajs.get(trajNames.traj2));
+
+                // Scanning second time if needed
+                if (pos == ProcessDetections.pos.notFound) {
+                    processDetections.setPhase(2);
+                    pos = processDetections.getPos(true);
+                }
+
+                Pose2d endPlacePos = new Pose2d();
+
+                if (pos == ProcessDetections.pos.left) {
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajLeft1));
+                    drop(dt);
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajLeft2));
+                    endPlacePos = trajs.get(trajNames.trajLeft2).end();
+                }
+                if (pos == ProcessDetections.pos.middle) {
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajMiddle1));
+                    drop(dt);
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajMiddle2));
+                    endPlacePos = trajs.get(trajNames.trajMiddle2).end();
+                }
+                if (pos == ProcessDetections.pos.right) {
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajRight1));
+                    drop(dt);
+                    drive.followTrajectorySequence(trajs.get(trajNames.trajRight2));
+                    endPlacePos = trajs.get(trajNames.trajRight2).end();
+                }
+
+                switchCurPose(endPlacePos);
+
+                ///////
+
+                TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(curPose)
+                        .forward(2)
+                        //.turn(Math.toRadians(0))
+                        .lineToLinearHeading(new Pose2d(60, -70, Math.toRadians(0)))
+                        .build();
+                //drive.followTrajectorySequence(trajSeq4Right);
+                //drive.followTrajectorySequence(trajSeq3);
+            }
+            else
+            {
+                //drive.followTrajectorySequence(trajSeqTurnTest);
+            }
+        }
+
+
+
+    }
+
+    @Override
+    public Pose2d switchCurPose(Pose2d newPose)
+    {
+        Pose2d tempPose = curPose;
+        curPose = newPose;
+        return tempPose;
+    }
+
+    public TrajectorySequence returnFirstTraj(SampleMecanumDrive drive)
+    {
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(curPose)
+                //.forward(4)
+                //.strafeRight(11)
+                .lineToLinearHeading(new Pose2d(curPose.getX() + 11, curPose.getY() + 8, Math.toRadians(90)))
+                .waitSeconds(2)
+                .build();
+        trajs.put(trajNames.traj1, trajSeq);
+        switchCurPose(trajSeq.end());
+        return  trajSeq;
+    }
+
+    public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive)
+    {
+        TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(curPose)
+                .strafeLeft(13)
+                .waitSeconds(1)
+                .build();
+        trajs.put(trajNames.traj2, trajSeq2);
+        switchCurPose(trajSeq2.end());
+        return  trajSeq2;
+    }
+
+    public TrajectorySequence returnTrajLeft(SampleMecanumDrive drive, int step)
+    {
+        if (step == 1)
+        {
+            TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(curPose)
+                    //.forward(16)
+                    //.turn(Math.toRadians(-90))
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() + 26, Math.toRadians(0)))
+                    .back(7)
+                    .build();
+            trajs.put(trajNames.trajLeft1, trajSeq3Left);
+            switchCurPose(trajSeq3Left.end());
+            return trajSeq3Left;
+        }
+        else
+        {
+            TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(curPose)
+                    .forward(6)
+                    //.forward(16)
+                    //.turn(Math.toRadians(-90))
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() - 26, Math.toRadians(0)))
+                    //.back(3)
+                    .build();
+            trajs.put(trajNames.traj1, trajSeq3Left2);
+            switchCurPose(trajSeq3Left2.end());
+            return trajSeq3Left2;
+        }
+    }
+
+    public TrajectorySequence returnTrajMiddle(SampleMecanumDrive drive, int step)
+    {
+        if (step == 1)
+        { // test for git
+            TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(curPose)
+                    //.forward(16)
+                    //.turn(Math.toRadians(180))
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() + 15, Math.toRadians(90)))
+                    .turn(Math.toRadians(180))
+                    .back(4)
+                    .build();
+            trajs.put(trajNames.traj1, trajSeq3Middle);
+            switchCurPose(trajSeq3Middle.end());
+            return trajSeq3Middle;
+        }
+        else
+        {
+            TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(curPose)
+                    .forward(6)
+                    //.turn(Math.toRadians(90))
+                    //.turn(Math.toRadians(90))
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() - 15, Math.toRadians(0)))
+                    //.back(3)
+                    .build();
+            trajs.put(trajNames.traj1, trajSeq3Middle2);
+            switchCurPose(trajSeq3Middle2.end());
+            return trajSeq3Middle2;
+        }
+    }
+
+    public TrajectorySequence returnTrajRight(SampleMecanumDrive drive, int step)
+    {
+        if (step == 1)
+        {
+            TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(curPose)
+                    //.forward(16)
+                    //.turn(Math.toRadians(90))
+                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() + 29, Math.toRadians(180)))
+                    .back(6)
+                    .build();
+            trajs.put(trajNames.traj1, trajSeq3Right);
+            switchCurPose(trajSeq3Right.end());
+            return trajSeq3Right;
+        }
+        else
+        {
+
+            TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(curPose)
+                    .forward(4)
+                    .strafeLeft(15)
+                    .turn(Math.toRadians(180))
+                    .build();
+            trajs.put(trajNames.traj1, trajSeq3Right2);
+            switchCurPose(trajSeq3Right2.end());
+            return trajSeq3Right2;
+
+            /*TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
+                    .forward(4)
+                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 22, Math.toRadians(0)))
+                    //.strafeLeft(13)
+                    //.turn(Math.toRadians(180))
+                    .build();
+            return trajSeq3Right2;*/
+        }
+    }
+
+    public void drop(DriveTrain dt)
+    {
+        ElapsedTime outputTime = new ElapsedTime();
+        while (outputTime.milliseconds() < 4000) {
+            dt.liftarms();
+        }
+    }
+
+    public void buildInitialTrajs(SampleMecanumDrive drive)
+    {
         ////// DECLARING START POS FOR ROBOT
         startPose = new Pose2d(12, -61, Math.toRadians(90));
         switchCurPose(startPose);
@@ -99,7 +307,7 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
         ////// SECOND TRAJECTORY SEQUENCE, THE ONE THAT STRAFES LEFT AFTER DOING THE FIRST SCAN.
         ////// THIS IS USED FOR NAVIGATING TO THE PIXEL DROP LOCATION. THE SECOND Pose2d OBJECT,
         ////// CALLED end2, IS THE END POSITION OF THE MOVEMENT NAVIGATING TO THE PIXEL.
-        Pose2d endOfScans = trajs.get(AMLAutoBlue.trajNames.traj2).end();
+        Pose2d endOfScans = trajs.get(trajNames.traj2).end();
 
 
 
@@ -154,209 +362,6 @@ public class AMLAutoBlueRight extends LinearOpMode implements VisionPortalUser, 
         returnTrajRight(drive, 2);
 
 
-        /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
-
-        // PROGRAM STARTS
-        waitForStart();
-        telemetry.update();
-
-
-        ///// Starting the program
-        if (!isStopRequested()) {
-            if (!turnTest) {
-
-                // First traj sequence
-                drive.followTrajectorySequence(trajs.get(AMLAutoBlue.trajNames.traj1));
-
-                // Scanning first time
-                processDetections.setPhase(1);
-                pos = processDetections.getPos(true);
-
-                // Second traj sequence
-                drive.followTrajectorySequence(trajs.get(AMLAutoBlue.trajNames.traj2));
-
-                // Scanning second time if needed
-                if (pos == ProcessDetections.pos.notFound) {
-                    processDetections.setPhase(2);
-                    pos = processDetections.getPos(true);
-                }
-
-                Pose2d endPlacePos = new Pose2d();
-
-                if (pos == ProcessDetections.pos.left) {
-                    drive.followTrajectorySequence(trajs.get(AMLAutoBlue.trajNames.trajLeft1));
-                    drop(dt);
-                    drive.followTrajectorySequence(trajs.get(AMLAutoBlue.trajNames.trajLeft2));
-                    endPlacePos = trajs.get(AMLAutoBlue.trajNames.trajLeft2).end();
-                }
-                if (pos == ProcessDetections.pos.middle) {
-                    drive.followTrajectorySequence(trajs.get(AMLAutoBlue.trajNames.trajMiddle1));
-                    drop(dt);
-                    drive.followTrajectorySequence(trajs.get(AMLAutoBlue.trajNames.trajMiddle2));
-                    endPlacePos = trajs.get(AMLAutoBlue.trajNames.trajMiddle2).end();
-                }
-                if (pos == ProcessDetections.pos.right) {
-                    drive.followTrajectorySequence(trajs.get(AMLAutoBlue.trajNames.trajRight1));
-                    drop(dt);
-                    drive.followTrajectorySequence(trajs.get(AMLAutoBlue.trajNames.trajRight2));
-                    endPlacePos = trajs.get(AMLAutoBlue.trajNames.trajRight2).end();
-                }
-
-                switchCurPose(endPlacePos);
-
-                ///////
-
-                TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(curPose)
-                        .forward(2)
-                        //.turn(Math.toRadians(0))
-                        .lineToLinearHeading(new Pose2d(60, -70, Math.toRadians(0)))
-                        .build();
-                //drive.followTrajectorySequence(trajSeq4Right);
-                //drive.followTrajectorySequence(trajSeq3);
-            }
-            else
-            {
-                //drive.followTrajectorySequence(trajSeqTurnTest);
-            }
-        }
-
-
-
-    }
-
-    @Override
-    public Pose2d switchCurPose(Pose2d newPose)
-    {
-        Pose2d tempPose = curPose;
-        curPose = newPose;
-        return tempPose;
-    }
-
-    public TrajectorySequence returnFirstTraj(SampleMecanumDrive drive)
-    {
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(curPose)
-                //.forward(4)
-                //.strafeRight(11)
-                .lineToLinearHeading(new Pose2d(curPose.getX() + 11, curPose.getY() + 8, Math.toRadians(90)))
-                .waitSeconds(2)
-                .build();
-        trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq);
-        switchCurPose(trajSeq.end());
-        return  trajSeq;
-    }
-
-    public TrajectorySequence returnSecondTraj(SampleMecanumDrive drive)
-    {
-        TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(curPose)
-                .strafeLeft(13)
-                .waitSeconds(1)
-                .build();
-        trajs.put(AMLAutoBlue.trajNames.traj2, trajSeq2);
-        switchCurPose(trajSeq2.end());
-        return  trajSeq2;
-    }
-
-    public TrajectorySequence returnTrajLeft(SampleMecanumDrive drive, int step)
-    {
-        if (step == 1)
-        {
-            TrajectorySequence trajSeq3Left = drive.trajectorySequenceBuilder(curPose)
-                    //.forward(16)
-                    //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() + 26, Math.toRadians(0)))
-                    .back(7)
-                    .build();
-            trajs.put(AMLAutoBlue.trajNames.trajLeft1, trajSeq3Left);
-            switchCurPose(trajSeq3Left.end());
-            return trajSeq3Left;
-        }
-        else
-        {
-            TrajectorySequence trajSeq3Left2 = drive.trajectorySequenceBuilder(curPose)
-                    .forward(6)
-                    //.forward(16)
-                    //.turn(Math.toRadians(-90))
-                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() - 26, Math.toRadians(0)))
-                    //.back(3)
-                    .build();
-            trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq3Left2);
-            switchCurPose(trajSeq3Left2.end());
-            return trajSeq3Left2;
-        }
-    }
-
-    public TrajectorySequence returnTrajMiddle(SampleMecanumDrive drive, int step)
-    {
-        if (step == 1)
-        { // test for git
-            TrajectorySequence trajSeq3Middle = drive.trajectorySequenceBuilder(curPose)
-                    //.forward(16)
-                    //.turn(Math.toRadians(180))
-                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() + 15, Math.toRadians(90)))
-                    .turn(Math.toRadians(180))
-                    .back(4)
-                    .build();
-            trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq3Middle);
-            switchCurPose(trajSeq3Middle.end());
-            return trajSeq3Middle;
-        }
-        else
-        {
-            TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(curPose)
-                    .forward(6)
-                    //.turn(Math.toRadians(90))
-                    //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() - 15, Math.toRadians(0)))
-                    //.back(3)
-                    .build();
-            trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq3Middle2);
-            switchCurPose(trajSeq3Middle2.end());
-            return trajSeq3Middle2;
-        }
-    }
-
-    public TrajectorySequence returnTrajRight(SampleMecanumDrive drive, int step)
-    {
-        if (step == 1)
-        {
-            TrajectorySequence trajSeq3Right = drive.trajectorySequenceBuilder(curPose)
-                    //.forward(16)
-                    //.turn(Math.toRadians(90))
-                    .lineToLinearHeading(new Pose2d(curPose.getX(), curPose.getY() + 29, Math.toRadians(180)))
-                    .back(6)
-                    .build();
-            trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq3Right);
-            switchCurPose(trajSeq3Right.end());
-            return trajSeq3Right;
-        }
-        else
-        {
-
-            TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(curPose)
-                    .forward(4)
-                    .strafeLeft(15)
-                    .turn(Math.toRadians(180))
-                    .build();
-            trajs.put(AMLAutoBlue.trajNames.traj1, trajSeq3Right2);
-            switchCurPose(trajSeq3Right2.end());
-            return trajSeq3Right2;
-
-            /*TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
-                    .forward(4)
-                    .lineToLinearHeading(new Pose2d(end.getX(), end.getY() - 22, Math.toRadians(0)))
-                    //.strafeLeft(13)
-                    //.turn(Math.toRadians(180))
-                    .build();
-            return trajSeq3Right2;*/
-        }
-    }
-
-    public void drop(DriveTrain dt)
-    {
-        ElapsedTime outputTime = new ElapsedTime();
-        while (outputTime.milliseconds() < 4000) {
-            dt.liftarms();
-        }
     }
 
     @Override

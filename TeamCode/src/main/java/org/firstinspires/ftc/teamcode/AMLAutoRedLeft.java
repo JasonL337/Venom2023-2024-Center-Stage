@@ -41,7 +41,7 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
         trajs = new TreeMap<>();
     }
 
-    public enum trajNames
+    private enum trajNames
     {
         turnTest,
         traj1,
@@ -67,85 +67,9 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
         initTrajMap();
         processDetections.detectTFImages.setProcessor(true);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        buildInitialTrajs(drive);
 
 
-        ////// DECLARING START POS FOR ROBOT
-        startPose = new Pose2d(12, 61, Math.toRadians(270));
-        switchCurPose(startPose);
-
-
-        ////// CREATING THE TURN TEST TRAJECTORY SEQUENCE
-        returnTajTurnTest(drive);
-
-
-        ////// INITIALIZING THE STARTING POSITION OF THE AUTO PATHING USING startPose
-        drive.setPoseEstimate(startPose);
-
-
-        ////// CREATING THE FIRST TRAJECTORY SEQUENCE. THIS MAINTAINS THE SAME HEADING AS IT
-        ////// MOVES DIAGONALLY TO OUR FIRST SCAN AREA ON THE RIGHT POSITION.
-        returnFirstTraj(drive);
-
-
-        ////// CREATING THE SECOND TRAJECTORY SEQUENCE. TO BE FOLLOWED (ALONG WITH THE FIRST)
-        ////// NO MATTER THE SCAN/VISION DATA (IT DOES THIS TRAJECTORY IN ALL CASES)
-        returnSecondTraj(drive);
-
-
-        ////// CREATING TWO Pose2d OBJECTS CALLED. THE FIRST, end, IS THE END POSITION OF THE
-        ////// SECOND TRAJECTORY SEQUENCE, THE ONE THAT STRAFES LEFT AFTER DOING THE FIRST SCAN.
-        ////// THIS IS USED FOR NAVIGATING TO THE PIXEL DROP LOCATION. THE SECOND Pose2d OBJECT,
-        ////// CALLED end2, IS THE END POSITION OF THE MOVEMENT NAVIGATING TO THE PIXEL.
-        Pose2d endOfScans = trajs.get(trajNames.traj2).end();
-
-
-
-        ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
-
-        switchCurPose(endOfScans);
-
-        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
-        returnTrajLeft(drive, 1);
-
-        ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-
-        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE LEFT SIDE TOWARDS THE STARING POSITION
-        ////// SO THAT WE MAY PARK.
-        returnTrajLeft(drive, 2);
-
-
-        ///////////////////////////////////////////////// MIDDLE ///////////////////////////////////////////////////////
-
-
-        switchCurPose(endOfScans);
-        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL IN THE MIDDLE.
-        returnTrajMiddle(drive, 1);
-       /* TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(trajSeq3Middle.end())
-                .turn(Math.toRadians(90))
-                .build();
-
-        */
-
-        ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-
-        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL IN THE MIDDLE TOWARDS THE STARING POSITION
-        ////// SO THAT WE MAY PARK.
-        returnTrajMiddle(drive, 2);
-
-
-        ///////////////////////////////////////////////// RIGHT ///////////////////////////////////////////////////////
-
-        switchCurPose(endOfScans);
-
-        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
-        returnTrajRight(drive, 1);
-
-        ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
-
-
-        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE RIGHT SIDE TOWARDS THE STARING POSITION
-        ////// SO THAT WE MAY PARK.
-        returnTrajRight(drive, 2);
 
 
         /////////////////////////////////////////////////// PROGRAM STARTING ////////////////////////////////////////
@@ -363,6 +287,88 @@ public class AMLAutoRedLeft extends LinearOpMode implements VisionPortalUser, Te
         while (outputTime.milliseconds() < 2000) {
             dt.liftarms();
         }
+    }
+
+    public void buildInitialTrajs(SampleMecanumDrive drive)
+    {
+        ////// DECLARING START POS FOR ROBOT
+        startPose = new Pose2d(12, 61, Math.toRadians(270));
+        switchCurPose(startPose);
+
+
+        ////// CREATING THE TURN TEST TRAJECTORY SEQUENCE
+        returnTajTurnTest(drive);
+
+
+        ////// INITIALIZING THE STARTING POSITION OF THE AUTO PATHING USING startPose
+        drive.setPoseEstimate(startPose);
+
+
+        ////// CREATING THE FIRST TRAJECTORY SEQUENCE. THIS MAINTAINS THE SAME HEADING AS IT
+        ////// MOVES DIAGONALLY TO OUR FIRST SCAN AREA ON THE RIGHT POSITION.
+        returnFirstTraj(drive);
+
+
+        ////// CREATING THE SECOND TRAJECTORY SEQUENCE. TO BE FOLLOWED (ALONG WITH THE FIRST)
+        ////// NO MATTER THE SCAN/VISION DATA (IT DOES THIS TRAJECTORY IN ALL CASES)
+        returnSecondTraj(drive);
+
+
+        ////// CREATING TWO Pose2d OBJECTS CALLED. THE FIRST, end, IS THE END POSITION OF THE
+        ////// SECOND TRAJECTORY SEQUENCE, THE ONE THAT STRAFES LEFT AFTER DOING THE FIRST SCAN.
+        ////// THIS IS USED FOR NAVIGATING TO THE PIXEL DROP LOCATION. THE SECOND Pose2d OBJECT,
+        ////// CALLED end2, IS THE END POSITION OF THE MOVEMENT NAVIGATING TO THE PIXEL.
+        Pose2d endOfScans = trajs.get(trajNames.traj2).end();
+
+
+
+        ///////////////////////////////////////////////// LEFT ///////////////////////////////////////////////////////
+
+        switchCurPose(endOfScans);
+
+        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
+        returnTrajLeft(drive, 1);
+
+        ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
+
+        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE LEFT SIDE TOWARDS THE STARING POSITION
+        ////// SO THAT WE MAY PARK.
+        returnTrajLeft(drive, 2);
+
+
+        ///////////////////////////////////////////////// MIDDLE ///////////////////////////////////////////////////////
+
+
+        switchCurPose(endOfScans);
+        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL IN THE MIDDLE.
+        returnTrajMiddle(drive, 1);
+       /* TrajectorySequence trajSeq3Middle2 = drive.trajectorySequenceBuilder(trajSeq3Middle.end())
+                .turn(Math.toRadians(90))
+                .build();
+
+        */
+
+        ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
+
+        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL IN THE MIDDLE TOWARDS THE STARING POSITION
+        ////// SO THAT WE MAY PARK.
+        returnTrajMiddle(drive, 2);
+
+
+        ///////////////////////////////////////////////// RIGHT ///////////////////////////////////////////////////////
+
+        switchCurPose(endOfScans);
+
+        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING TO THE PIXEL ON THE LEFT SIDE.
+        returnTrajRight(drive, 1);
+
+        ////// SETTING end2 TO THE ENDING POSITION OF THE FIRST NAVIGATION.
+
+
+        ////// THIS IS THE TRAJECTORY SEQUENCE NAVIGATING FROM THE PIXEL ON THE RIGHT SIDE TOWARDS THE STARING POSITION
+        ////// SO THAT WE MAY PARK.
+        returnTrajRight(drive, 2);
+
     }
 
     @Override

@@ -21,6 +21,11 @@ public class DistanceSensorTest extends OpMode {
         double current_dist = distanceSensor.getDistance(DistanceUnit.INCH);
         telemetry.addData("Distance: ", current_dist);
     }
+
+    public double getDist()
+    {
+        return distanceSensor.getDistance(DistanceUnit.INCH);
+    }
     @Override
     public void loop()
     {

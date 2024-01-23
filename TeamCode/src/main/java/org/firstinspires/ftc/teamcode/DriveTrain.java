@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
@@ -21,6 +22,8 @@ public class DriveTrain {
     public DcMotor liftL;
 
     public DcMotor liftR;
+
+    public Servo boxL;
 
     Servo armR;
 
@@ -52,6 +55,7 @@ public class DriveTrain {
         //liftR = auto.hardwareMap.dcMotor.get("liftRightMotor");
         boxOutTake = auto.hardwareMap.servo.get("outtake");
         processing = auto.hardwareMap.crservo.get("processing");
+        boxL = auto.hardwareMap.servo.get("boxL");
 
 
 
@@ -100,6 +104,22 @@ public class DriveTrain {
             }
         }
 
+        public void lowerBox()
+        {
+            boxL.setPosition(0.4);
+        }
+
+        public void setMotorPowerDist(double power, double minDist, double curDist)
+        {
+            while (curDist > minDist)
+            {
+                backL.setPower(power);
+                backR.setPower(power);
+                frontL.setPower(power);
+                frontR.setPower(power);
+            }
+        }
+
         public double getTrueAngle(double heading)
         {
             double angle = returnGyroYaw();
@@ -143,8 +163,11 @@ public class DriveTrain {
 
     // raise the lifts for the outtake
     public void raiselifts(double seconds) {
-        liftL.setPower(1);
-        liftR.setPower(1);
+        ElapsedTime time = new ElapsedTime();
+        while (time.milliseconds() < seconds * 1000) {
+            liftL.setPower(1);
+            liftR.setPower(1);
+        }
 
     }
 
