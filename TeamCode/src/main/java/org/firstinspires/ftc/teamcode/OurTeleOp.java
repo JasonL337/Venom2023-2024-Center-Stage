@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name = "TeleOpV2", group = "Tele")
@@ -49,6 +50,9 @@ public class OurTeleOp extends OpMode {
 
     ElapsedTime playerRelTime = new ElapsedTime();
     boolean armUp = false;
+
+    boolean isPlacing;
+    DistanceSensorData distanceSensorTest;
     @Override
     public void init() {
 
@@ -98,6 +102,9 @@ public class OurTeleOp extends OpMode {
         // Drone Launcher
         dronelauncher = hardwareMap.servo.get("dronelauncher");
 
+        distanceSensorTest = new DistanceSensorData();
+        distanceSensorTest.initDistance(this);
+
 
         frontL.setDirection(DcMotor.Direction.REVERSE);
         backL.setDirection(DcMotor.Direction.REVERSE);
@@ -134,6 +141,7 @@ public class OurTeleOp extends OpMode {
          */
 
         runDriver1Methods();
+        telemetry.addData("dist", distanceSensorTest.getDist());
 
 
         /* Gamepad 2:
@@ -201,6 +209,14 @@ public class OurTeleOp extends OpMode {
 
         public void runDriveTrain()
         {
+            if (gamepad1.dpad_right)
+            {
+                isPlacing = true;
+            }
+            if (isPlacing && distanceSensorTest.getDist() < 2)
+            {
+                gamepad1.rumble(300);
+            }
             double y = -gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y);
             double x = gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x);
             double rx = gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x);
@@ -298,11 +314,11 @@ public class OurTeleOp extends OpMode {
             boolean leftBump = gamepad2.left_bumper;
             boolean rightBump = gamepad2.right_bumper;
             if (leftBump) {
-                boxL.setPosition(0.9);
+                boxL.setPosition(0.1);
                 //boxR.setPosition(1);
             }
             else if (rightBump){
-                boxL.setPosition(0.4);
+                boxL.setPosition(.5);
                 //boxR.setPosition(0.0);
             }
         }
