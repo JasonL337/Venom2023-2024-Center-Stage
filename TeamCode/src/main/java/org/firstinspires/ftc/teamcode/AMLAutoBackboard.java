@@ -41,7 +41,7 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         // Hardware mapping our distance sensor
-        //distanceSensor = hardwareMap.get(DistanceSensor.class, "Distance Sensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "Distance Sensor");
 
 
         ////// DECLARING START POS FOR ROBOT
@@ -172,8 +172,8 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                     drop(dt);
                     drive.followTrajectorySequence(trajSeq3Left2);
                     drive.followTrajectorySequence(backBoardSetupLeft);
-                    //currDist(); // sees how far we are from the backboard in inches
-                        /*while (distance > 1) // we go forward until we are an inch away from the backboard
+                    currDist(); // sees how far we are from the backboard in inches
+                    while (distance > 1) // we go forward until we are an inch away from the backboard
                         {
                             // we move forward at a moderate pace
                             dt.frontR.setPower(0.5);
@@ -181,7 +181,7 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                             dt.backR.setPower(0.5);
                             dt.backL.setPower(0.5);
                             currDist(); // we keep on checking our distance to see if we have gotten closer
-                        }*/
+                        }
                     drive.followTrajectorySequence(dropSetupLeft);
                     endPlacePos = dropSetupLeft.end();
                 }
@@ -191,15 +191,15 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                     drop(dt);
                     drive.followTrajectorySequence(trajSeq3Middle3);
                     drive.followTrajectorySequence(backBoardSetupMiddle);
-                    //currDist();
-                        /*while (distance > 1)
+                    currDist();
+                    while (distance > 1)
                         {
                             dt.frontR.setPower(0.5);
                             dt.frontL.setPower(-0.5);
                             dt.backR.setPower(0.5);
                             dt.backL.setPower(-0.5);
                             currDist();
-                        }*/
+                        }
                     drive.followTrajectorySequence(dropSetupMiddle);
                     endPlacePos = dropSetupMiddle.end();
                 }
@@ -208,15 +208,15 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                     drop(dt);
                     drive.followTrajectorySequence(trajSeq3Right2);
                     drive.followTrajectorySequence(backBoardSetupRight);
-                    //currDist();
-                        /*while (distance > 1)
+                    currDist();
+                    while (distance > 1)
                         {
                             dt.frontR.setPower(0.5);
                             dt.frontL.setPower(0.5);
                             dt.backR.setPower(0.5);
                             dt.backL.setPower(0.5);
                             currDist();
-                        }*/
+                        }
                     drive.followTrajectorySequence(dropSetupRight);
                     endPlacePos = dropSetupRight.end();
                 }
@@ -388,10 +388,10 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                 .build();
         return dropSetupRight;
     }
-    /*public void currDist()
+    public void currDist()
     {
         distance = distanceSensor.getDistance(DistanceUnit.CM);
-    }*/
+    }
     public void drop(DriveTrain dt)
     {
         ElapsedTime outputTime = new ElapsedTime();

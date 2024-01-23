@@ -215,7 +215,9 @@ public class OurTeleOp extends OpMode {
             }
             if (isPlacing && distanceSensorTest.getDist() < 2)
             {
-                gamepad1.rumble(300);
+                telemetry.addLine("in");
+                gamepad1.rumble(1, 1, 2000);
+                isPlacing = false;
             }
             double y = -gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y);
             double x = gamepad1.left_stick_x*Math.abs(gamepad1.left_stick_x);
