@@ -219,6 +219,20 @@ public class DriveTrain {
         armR.setPosition(1);
     }
 
+    public void raiseLifts() {
+        ElapsedTime raiselifts = new ElapsedTime();
+        while (raiselifts.milliseconds() < 500) {
+            liftL.setPower(0.5);
+        }
+    }
+
+    public void openBox() {
+        ElapsedTime openbox = new ElapsedTime();
+        while (openbox.milliseconds() < 1000) {
+            boxOutTake.setPosition(0);
+        }
+    }
+
     public double returnGyroYaw()
     {
         //angles = imu.getAngularOrientation();
