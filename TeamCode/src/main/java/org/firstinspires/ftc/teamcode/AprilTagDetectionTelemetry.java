@@ -61,6 +61,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
      * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
+    AprilTagPos aprilTagPos;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -125,6 +126,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
      */
     private void initAprilTag() {
 
+        aprilTagPos = new AprilTagPos();
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
             //.setDrawAxes(false)
@@ -153,6 +155,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
 
+
         // Choose a camera resolution. Not all cameras support all resolutions.
         //builder.setCameraResolution(new Size(640, 480));
 
@@ -172,6 +175,10 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
+        Camera camera = new Camera();
+        camera.initVisionPortal(this);
+        aprilTagPos.initAprilTag(this, camera);
+        aprilTagPos.setAprilTagProcessor(aprilTag);
 
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);
@@ -184,6 +191,9 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
      */
     private void telemetryAprilTag() {
 
+        aprilTagPos.setCorrectAprilTag(ProcessDetections.pos.middle, false);
+        telemetry.addData("x", aprilTagPos.getDist()[0]);
+        telemetry.addData("ats", aprilTagPos.getDetections().get(0));
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 

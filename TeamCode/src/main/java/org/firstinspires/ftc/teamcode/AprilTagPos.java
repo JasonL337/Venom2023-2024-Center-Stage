@@ -24,6 +24,8 @@ public class AprilTagPos {
     public static final double KNOWN_HEIGHT = 159.5;
     public static final double DIST_BETWEEN = 6;
 
+    AprilTagProcessor aprilTagProcessor;
+
     public void initAprilTag(LinearOpMode masterC, Camera camera) {
         master = masterC;
         getAprilTags = new GetAprilTags();
@@ -35,14 +37,19 @@ public class AprilTagPos {
         return (Math.abs(aprilTag.corners[0].y - aprilTag.corners[3].y) + Math.abs(aprilTag.corners[1].y - aprilTag.corners[2].y)) / 2;
     }
 
+    public void setAprilTagProcessor(AprilTagProcessor at)
+    {
+        aprilTagProcessor = at;
+    }
+
     public List<AprilTagDetection> getDetections()
     {
-        return getAprilTags.getDetections();
+        return aprilTagProcessor.getDetections();
     }
 
     public double[] getDist()
     {
-        List<AprilTagDetection> aprilTags = getAprilTags.getDetections();
+        List<AprilTagDetection> aprilTags = getDetections();
         ArrayList<AprilTagDetection> correctAprilTags = new ArrayList<>();
         correctAprilTags.add(null);
         correctAprilTags.add(null);

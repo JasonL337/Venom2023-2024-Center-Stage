@@ -29,6 +29,10 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
 
     public TreeMap<trajNames, TrajectorySequence> trajs;
 
+    DistanceSensorData distanceSensorTest;
+
+    AprilTagPos aprilTagPos;
+
 
     public int in2rev(double inches){
         return (int) Math.round((inches/(4 * Math.PI) * 537.7));
@@ -72,6 +76,10 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
         processDetections.detectTFImages.setProcessor(true);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         buildInitialTrajs(drive);
+        distanceSensorTest = new DistanceSensorData();
+        distanceSensorTest.initDistance(this);
+        aprilTagPos = new AprilTagPos();
+        aprilTagPos.initAprilTag(this, camera);
 
 
 
@@ -92,7 +100,7 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
 
                 // Scanning first time
                 processDetections.setPhase(1);
-                pos = processDetections.getPos(false);
+                pos = processDetections.getPos(true);
 
                 // Second traj sequence
                 drive.followTrajectorySequence(trajs.get(trajNames.traj2));
@@ -100,17 +108,22 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
                 // Scanning second time if needed
                 if (pos == ProcessDetections.pos.notFound) {
                     processDetections.setPhase(2);
-                    pos = processDetections.getPos(false);
+                    pos = processDetections.getPos(true);
                 }
 
                 Pose2d endPlacePos = new Pose2d();
+
+                aprilTagPos.setCorrectAprilTag(pos, false);
 
                 if (pos == ProcessDetections.pos.left) {
                     drive.followTrajectorySequence(trajs.get(trajNames.trajLeft1));
                     drop(dt);
                     drive.followTrajectorySequence(trajs.get(trajNames.trajLeft2));
-                    //drive.followTrajectorySequence(trajs.get(trajNames.backBoardSetupLeft));
-                    //drive.followTrajectorySequence(trajs.get(trajNames.strafeToDropLeft));
+                    drive.followTrajectorySequence(trajs.get(trajNames.backBoardSetupLeft));
+                    drive.followTrajectorySequence(trajs.get(trajNames.strafeToDropLeft));
+                    dt.setMotorPowerDist(.25, 2, distanceSensorTest.getDist());
+                    dt.raiselifts(1.3);
+                    dt.lowerBox();
                     endPlacePos = trajs.get(trajNames.strafeToDropLeft).end();
                 }
 
@@ -118,8 +131,11 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
                     drive.followTrajectorySequence(trajs.get(trajNames.trajMiddle1));
                     drop(dt);
                     drive.followTrajectorySequence(trajs.get(trajNames.trajMiddle2));
-                    //drive.followTrajectorySequence(trajs.get(trajNames.backBoardSetupMiddle));
-                    //drive.followTrajectorySequence(trajs.get(trajNames.strafeToDropMiddle));
+                    drive.followTrajectorySequence(trajs.get(trajNames.backBoardSetupMiddle));
+                    drive.followTrajectorySequence(trajs.get(trajNames.strafeToDropMiddle));
+                    dt.setMotorPowerDist(.25, 2, distanceSensorTest.getDist());
+                    dt.raiselifts(1.3);
+                    dt.lowerBox();
                     endPlacePos = trajs.get(trajNames.strafeToDropMiddle).end();
                 }
 
@@ -127,27 +143,29 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
                     drive.followTrajectorySequence(trajs.get(trajNames.trajRight1));
                     drop(dt);
                     drive.followTrajectorySequence(trajs.get(trajNames.trajRight2));
-                    //drive.followTrajectorySequence(trajs.get(trajNames.backBoardSetupRight));
-                    //drive.followTrajectorySequence(trajs.get(trajNames.strafeToDropRight));
+                    drive.followTrajectorySequence(trajs.get(trajNames.backBoardSetupRight));
+                    drive.followTrajectorySequence(trajs.get(trajNames.strafeToDropRight));
+                    dt.setMotorPowerDist(.25, 2, distanceSensorTest.getDist());
+                    dt.raiselifts(1.3);
+                    dt.lowerBox();
                     endPlacePos = trajs.get(trajNames.strafeToDropRight).end();
                 }
 
                 switchCurPose(endPlacePos);
-
 
                 ///////
 
                 TrajectorySequence trajSeq4Right = drive.trajectorySequenceBuilder(curPose)
                         .forward(2)
                         //.turn(Math.toRadians(0))
-                        .lineToLinearHeading(new Pose2d(70, 65 , Math.toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(60, -70, Math.toRadians(0)))
                         .build();
-                drive.followTrajectorySequence(trajSeq4Right);
+                //drive.followTrajectorySequence(trajSeq4Right);
                 //drive.followTrajectorySequence(trajSeq3);
             }
             else
             {
-                drive.followTrajectorySequence(trajs.get(trajNames.turnTest));
+                //drive.followTrajectorySequence(trajSeqTurnTest);
             }
         }
 
@@ -226,6 +244,7 @@ public class AMLAutoBlue extends LinearOpMode implements VisionPortalUser, Tenso
             return trajSeq3Left2;
         }
     }
+
 
     public TrajectorySequence moveToBackBoardLeft(SampleMecanumDrive drive)
     {

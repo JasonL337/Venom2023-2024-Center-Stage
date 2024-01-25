@@ -75,12 +75,11 @@ public class AMLAuto extends LinearOpMode implements VisionPortalUser, Tensorflo
         initTrajMap();
         processDetections.detectTFImages.setProcessor(true);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        buildInitialTrajs(drive);
         distanceSensorTest = new DistanceSensorData();
         distanceSensorTest.initDistance(this);
-        aprilTagPos = new AprilTagPos();
-        aprilTagPos.initAprilTag(this, camera);
-
+        //aprilTagPos = new AprilTagPos();
+        //aprilTagPos.initAprilTag(this, camera);
+        buildInitialTrajs(drive);
 
 
 
@@ -95,6 +94,7 @@ public class AMLAuto extends LinearOpMode implements VisionPortalUser, Tensorflo
         ///// Starting the program
         if (!isStopRequested()) {
             if (!turnTest) {
+                dt.setMotorPowerDist(.25, 2, distanceSensorTest.getDist());
 
                 // First traj sequence
                 drive.followTrajectorySequence(trajs.get(trajNames.traj1));
@@ -114,7 +114,7 @@ public class AMLAuto extends LinearOpMode implements VisionPortalUser, Tensorflo
 
                 Pose2d endPlacePos = new Pose2d();
 
-                aprilTagPos.setCorrectAprilTag(pos, false);
+                //aprilTagPos.setCorrectAprilTag(pos, false);
 
                 if (pos == ProcessDetections.pos.left) {
                     drive.followTrajectorySequence(trajs.get(trajNames.trajLeft1));
@@ -248,7 +248,8 @@ public class AMLAuto extends LinearOpMode implements VisionPortalUser, Tensorflo
     public TrajectorySequence strafeToDropLeft(SampleMecanumDrive drive)
     {
         TrajectorySequence dropSetupLeft = drive.trajectorySequenceBuilder(curPose)
-                .strafeRight(aprilTagPos.getDist()[0])
+             //   .strafeRight(aprilTagPos.getDist()[0])
+                .strafeRight(5)
                 .build();
         trajs.put(trajNames.strafeToDropLeft, dropSetupLeft);
         switchCurPose(dropSetupLeft.end());
@@ -298,7 +299,8 @@ public class AMLAuto extends LinearOpMode implements VisionPortalUser, Tensorflo
     public TrajectorySequence strafeToDropMiddle(SampleMecanumDrive drive)
     {
         TrajectorySequence dropSetupMiddle = drive.trajectorySequenceBuilder(curPose)
-                .strafeRight(aprilTagPos.getDist()[0])
+                //.strafeRight(aprilTagPos.getDist()[0])
+                .strafeRight(12)
                 .build();
         trajs.put(trajNames.strafeToDropMiddle, dropSetupMiddle);
         switchCurPose(dropSetupMiddle.end());
@@ -352,7 +354,8 @@ public class AMLAuto extends LinearOpMode implements VisionPortalUser, Tensorflo
     public TrajectorySequence strafeToDropRight(SampleMecanumDrive drive)
     {
         TrajectorySequence dropSetupRight = drive.trajectorySequenceBuilder(curPose)
-                .strafeRight(aprilTagPos.getDist()[0])
+               // .strafeRight(aprilTagPos.getDist()[0])
+                .strafeRight(18)
                 .build();
         trajs.put(trajNames.strafeToDropRight, dropSetupRight);
         switchCurPose(dropSetupRight.end());
