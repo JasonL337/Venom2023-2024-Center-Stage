@@ -320,7 +320,7 @@ public class OurTeleOp extends OpMode {
                 //boxR.setPosition(1);
             }
             else if (rightBump){
-                boxL.setPosition(.5);
+                boxL.setPosition(0.4);
                 //boxR.setPosition(0.0);
             }
         }
@@ -408,13 +408,15 @@ public class OurTeleOp extends OpMode {
                 if (armUp)
                 {
                     armUp = false;
-                    armL.setPosition(0.2);
+                    //armL.getController().pwmDisable();
+                   // armL.setPosition(0);
                     armR.setPosition(1);
                 }
                 else
                 {
                     armUp = true;
-                    armL.setPosition(1);
+                    //armL.getController().pwmEnable();
+                   // armL.setPosition(1);
                     armR.setPosition(0);
                 }
                 upArmTime.reset();

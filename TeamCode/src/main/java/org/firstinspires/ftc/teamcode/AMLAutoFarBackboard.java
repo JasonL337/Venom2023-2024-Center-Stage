@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySe
 import java.util.TreeMap;
 
 //luke was here
-@Autonomous(name = "Blue Auto Close Side", group = "Comp Autos")
+@Autonomous(name = "Blue Auto Far Side BB", group = "Comp Autos")
 @Config
 public class AMLAutoFarBackboard extends LinearOpMode implements VisionPortalUser, TensorflowProp, UsesTrajectories{
     Camera camera;
