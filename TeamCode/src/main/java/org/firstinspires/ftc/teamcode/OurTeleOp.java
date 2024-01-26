@@ -360,13 +360,13 @@ public class OurTeleOp extends OpMode {
             if (A_button) {
 
                 hangL.setPower(-1);
-                hangR.setPower(-1);
+                hangR.setPower(1);
             }
 
             boolean Y_button = gamepad2.y;
             if (Y_button) {
-                hangL.setPower(-0.3);
-                hangR.setPower(-0.3);
+                hangL.setPower(1);
+                hangR.setPower(-1);
 
             } else {
 

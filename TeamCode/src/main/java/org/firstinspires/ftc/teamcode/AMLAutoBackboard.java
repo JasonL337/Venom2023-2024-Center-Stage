@@ -173,13 +173,13 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                     drive.followTrajectorySequence(trajSeq3Left2);
                     drive.followTrajectorySequence(backBoardSetupLeft);
                     currDist(); // sees how far we are from the backboard in inches
-                    while (distance > 1.5) // we go forward until we are an inch away from the backboard
+                    while (distance > 1.2) // we go forward until we are an inch away from the backboard
                         {
                             // we move forward at a moderate pace
-                            dt.frontR.setPower(0.3);
-                            dt.frontL.setPower(0.3);
-                            dt.backR.setPower(0.3);
-                            dt.backL.setPower(0.3);
+                            dt.frontR.setPower(0.2);
+                            dt.frontL.setPower(0.2);
+                            dt.backR.setPower(0.2);
+                            dt.backL.setPower(0.2);
                             currDist(); // we keep on checking our distance to see if we have gotten closer
                         }
                     dt.boxL.setPosition(0.5);
@@ -196,12 +196,12 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                     drive.followTrajectorySequence(trajSeq3Middle3);
                     drive.followTrajectorySequence(backBoardSetupMiddle);
                     currDist();
-                    while (distance > 1.5)
+                    while (distance > 1.2)
                         {
-                            dt.frontR.setPower(0.3);
-                            dt.frontL.setPower(0.3);
-                            dt.backR.setPower(0.3);
-                            dt.backL.setPower(0.3);
+                            dt.frontR.setPower(0.2);
+                            dt.frontL.setPower(0.2);
+                            dt.backR.setPower(0.2);
+                            dt.backL.setPower(0.2);
                             currDist();
                         }
                     dt.boxL.setPosition(0.5);
@@ -217,12 +217,12 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                     drive.followTrajectorySequence(trajSeq3Right2);
                     drive.followTrajectorySequence(backBoardSetupRight);
                     currDist();
-                    while (distance > 1.5)
+                    while (distance > 1.2)
                         {
-                            dt.frontR.setPower(0.3);
-                            dt.frontL.setPower(0.3);
-                            dt.backR.setPower(0.3);
-                            dt.backL.setPower(0.3);
+                            dt.frontR.setPower(0.2);
+                            dt.frontL.setPower(0.2);
+                            dt.backR.setPower(0.2);
+                            dt.backL.setPower(0.2);
                             currDist();
                         }
                     dt.boxL.setPosition(0.5);
