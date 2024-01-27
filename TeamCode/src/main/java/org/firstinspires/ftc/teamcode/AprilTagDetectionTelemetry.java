@@ -61,7 +61,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
      * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
-    AprilTagPos aprilTagPos;
+    public AprilTagPos aprilTagPos;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -88,7 +88,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
         ObjectDetector objectDetector =
                 ObjectDetector.createFromFileAndOptions(
                         context, modelFile, options);*/
-        initAprilTag();
+        initAprilTag(this);
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -124,7 +124,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
     /**
      * Initialize the AprilTag processor.
      */
-    private void initAprilTag() {
+    public void initAprilTag(LinearOpMode master) {
 
         aprilTagPos = new AprilTagPos();
         // Create the AprilTag processor.
@@ -150,7 +150,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
 
         // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            builder.setCamera(master.hardwareMap.get(WebcamName.class, "Webcam 1"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
@@ -176,8 +176,8 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
         Camera camera = new Camera();
-        camera.initVisionPortal(this);
-        aprilTagPos.initAprilTag(this, camera);
+        camera.initVisionPortal(master);
+        aprilTagPos.initAprilTag(master, camera);
         aprilTagPos.setAprilTagProcessor(aprilTag);
 
         // Disable or re-enable the aprilTag processor at any time.
@@ -191,7 +191,7 @@ public class AprilTagDetectionTelemetry extends LinearOpMode {
      */
     private void telemetryAprilTag() {
 
-        aprilTagPos.setCorrectAprilTag(ProcessDetections.pos.middle, false);
+        aprilTagPos.setCorrectAprilTag(ProcessDetections.pos.left, false);
         telemetry.addData("x", aprilTagPos.getDist()[0]);
         telemetry.addData("ats", aprilTagPos.getDetections().get(0));
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();

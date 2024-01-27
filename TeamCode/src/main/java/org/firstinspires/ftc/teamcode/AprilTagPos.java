@@ -20,9 +20,13 @@ public class AprilTagPos {
 
     int validId = 0;
 
-    public static final double KNOWN_DIST = 14;
-    public static final double KNOWN_HEIGHT = 159.5;
-    public static final double DIST_BETWEEN = 6;
+    public static final double KNOWN_DIST = 17;
+    public static final double KNOWN_HEIGHT = 68;
+
+    public static final double KNOWN_PIX = 200;
+
+    public static final double KNOWN_X = 5.5;
+   // public static final double DIST_BETWEEN = 6;
 
     AprilTagProcessor aprilTagProcessor;
 
@@ -32,9 +36,9 @@ public class AprilTagPos {
         getAprilTags.initAprilTagDetections(masterC, camera);
     }   // end method initAprilTag()
 
-    public double getHeight(AprilTagDetection aprilTag)
+    public double getWidth(AprilTagDetection aprilTag)
     {
-        return (Math.abs(aprilTag.corners[0].y - aprilTag.corners[3].y) + Math.abs(aprilTag.corners[1].y - aprilTag.corners[2].y)) / 2;
+        return (Math.abs(aprilTag.corners[0].x - aprilTag.corners[1].x) + Math.abs(aprilTag.corners[3].x - aprilTag.corners[2].x)) / 2;
     }
 
     public void setAprilTagProcessor(AprilTagProcessor at)
@@ -84,12 +88,19 @@ public class AprilTagPos {
             return new double[]{5, 10};
         }
 
-        double distValid = KNOWN_HEIGHT / getHeight(correctAprilTags.get(0)) * KNOWN_DIST;
-        double distOther = KNOWN_HEIGHT / getHeight(correctAprilTags.get(1)) * KNOWN_DIST;
+
+
+        double distValid = KNOWN_HEIGHT / getWidth(correctAprilTags.get(0)) * KNOWN_DIST;
+
+        double distBetween = correctAprilTags.get(0).center.x - 300;
+        double x = (distBetween / KNOWN_PIX) * (distValid / KNOWN_DIST) * KNOWN_X;
+        double distOther = KNOWN_HEIGHT / getWidth(correctAprilTags.get(1)) * KNOWN_DIST;
         master.telemetry.addData("dist Valid: ", distValid);
-        master.telemetry.addData("dist Other: ", distOther);
-        master.telemetry.addData("height: ", getHeight(correctAprilTags.get(0)));
-        double distBetween = Math.abs(correctAprilTags.get(0).id - correctAprilTags.get(1).id) * DIST_BETWEEN;
+        master.telemetry.addData("dist Other: ", x);
+        master.telemetry.addData("center: ", correctAprilTags.get(0).center.x);
+        master.telemetry.addData("Known pix: ", correctAprilTags.get(0).center.x - 300);
+        master.telemetry.addData("height: ", getWidth(correctAprilTags.get(0)));
+       // double distBetween = Math.abs(correctAprilTags.get(0).id - correctAprilTags.get(1).id) * DIST_BETWEEN;
 
         double angleClose = Math.acos((Math.pow(distBetween, 2) - Math.pow(distValid, 2) - Math.pow(distOther, 2)) / (-2 * distValid * distOther));
         double angleFar;
@@ -107,7 +118,7 @@ public class AprilTagPos {
         master.telemetry.addData("angle Far: ", angleFar);
         double height = Math.sin(angleClose + angleFar) * distValid;
         double distX = Math.cos(angleClose + angleFar) * distValid;
-        return new double[]{distX, height};
+        return new double[]{x, height};
 
     }
 

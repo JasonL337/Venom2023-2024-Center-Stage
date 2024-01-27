@@ -9,14 +9,14 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class DistanceSensorData {
-    Rev2mDistanceSensor distanceSensor;
+    DistanceSensor distanceSensor;
     OpMode parent;
 
 
     public void initDistance(OpMode master)
     {
         parent = master;
-        distanceSensor = parent.hardwareMap.get(Rev2mDistanceSensor.class, "Distance Sensor");
+        distanceSensor = parent.hardwareMap.get(DistanceSensor.class, "Distance Sensor");
     }
     public void distance()
     {

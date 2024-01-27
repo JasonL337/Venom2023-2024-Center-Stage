@@ -221,7 +221,7 @@ public class DriveTrain {
 
     public void raiseLifts() {
         ElapsedTime raiselifts = new ElapsedTime();
-        while (raiselifts.milliseconds() < 400) {
+        while (raiselifts.milliseconds() < 500) {
             liftL.setPower(1);
         }
     }
