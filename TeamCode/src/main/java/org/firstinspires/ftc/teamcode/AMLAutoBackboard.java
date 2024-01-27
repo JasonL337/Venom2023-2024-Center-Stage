@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
-@Autonomous(name = "Red Auto Close Side Backboard", group = "Comp Autos")
+@Autonomous(name = "Red Auto Close Side Backboard (epic)", group = "Comp Autos")
 @Config
 public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, TensorflowProp{
     Camera camera;
@@ -182,10 +182,10 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                             dt.backL.setPower(0.2);
                             currDist(); // we keep on checking our distance to see if we have gotten closer
                         }
-                    dt.boxL.setPosition(0.5);
+                    dt.boxL.setPosition(0.4);
                     drive.followTrajectorySequence(dropSetupLeft);
                     dt.raiseLifts();
-                    sleep((500));
+                    dt.stopBox();
                     dt.openBox();
                     endPlacePos = dropSetupLeft.end();
                 }
@@ -204,10 +204,10 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                             dt.backL.setPower(0.2);
                             currDist();
                         }
-                    dt.boxL.setPosition(0.5);
+                    dt.boxL.setPosition(0.4);
                     drive.followTrajectorySequence(dropSetupMiddle);
                     dt.raiseLifts();
-                    sleep((500));
+                    dt.stopBox();
                     dt.openBox();
                     endPlacePos = dropSetupMiddle.end();
                 }
@@ -225,10 +225,10 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                             dt.backL.setPower(0.2);
                             currDist();
                         }
-                    dt.boxL.setPosition(0.5);
+                    dt.boxL.setPosition(0.4);
                     drive.followTrajectorySequence(dropSetupRight);
                     dt.raiseLifts();
-                    sleep((500));
+                    dt.stopBox();
                     dt.openBox();
                     endPlacePos = dropSetupRight.end();
                 }
@@ -324,7 +324,7 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
                     //.turn(Math.toRadians(180))
                     .lineToLinearHeading(new Pose2d(end.getX(), end.getY() + 15, Math.toRadians(90)))
                     .turn(Math.toRadians(180))
-                    .back(4)
+                    .back(3)
                     .build();
             return trajSeq3Middle;
         }
@@ -351,7 +351,9 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
     public TrajectorySequence strafeToDropMiddle(SampleMecanumDrive drive, Pose2d end)
     {
         TrajectorySequence dropSetupMiddle = drive.trajectorySequenceBuilder(end)
-                .strafeRight(4)
+                .back(4)
+                .strafeRight(5)
+                .forward(4)
                 .build();
         return dropSetupMiddle;
     }
@@ -373,7 +375,7 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
             TrajectorySequence trajSeq3Right2 = drive.trajectorySequenceBuilder(end)
                     .forward(3)
                     .strafeLeft(25)
-                    .lineToLinearHeading(new Pose2d(45, -40, Math.toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(30, -40, Math.toRadians(0)))
                     .build();
             return trajSeq3Right2;
 
@@ -396,7 +398,9 @@ public class AMLAutoBackboard extends LinearOpMode implements VisionPortalUser, 
     public TrajectorySequence strafeToDropRight(SampleMecanumDrive drive, Pose2d end)
     {
         TrajectorySequence dropSetupRight = drive.trajectorySequenceBuilder(end)
-                .strafeRight(8)
+                .back(4)
+                .strafeRight(20)
+                .forward(4)
                 .build();
         return dropSetupRight;
     }

@@ -409,14 +409,14 @@ public class OurTeleOp extends OpMode {
                 {
                     armUp = false;
                     //armL.getController().pwmDisable();
-                   // armL.setPosition(0);
+                   armL.setPosition(0);
                     armR.setPosition(1);
                 }
                 else
                 {
                     armUp = true;
                     //armL.getController().pwmEnable();
-                   // armL.setPosition(1);
+                   armL.setPosition(1);
                     armR.setPosition(0);
                 }
                 upArmTime.reset();
